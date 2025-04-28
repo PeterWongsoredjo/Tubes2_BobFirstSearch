@@ -6559,13 +6559,6 @@
     ]
   },
   {
-    "Result": "Book of the dead",
-    "Components": [
-      "Book",
-      "Baast"
-    ]
-  },
-  {
     "Result": "Prism",
     "Components": [
       "Glass",
@@ -8253,20 +8246,6 @@
     ]
   },
   {
-    "Result": "Babe the blue ox",
-    "Components": [
-      "Cow",
-      "Paul bunyan"
-    ]
-  },
-  {
-    "Result": "Babe the blue ox",
-    "Components": [
-      "Livestock",
-      "Paul bunyan"
-    ]
-  },
-  {
     "Result": "Horse",
     "Components": [
       "Animal",
@@ -9250,13 +9229,6 @@
     "Result": "Horizon",
     "Components": [
       "Sea",
-      "Sky"
-    ]
-  },
-  {
-    "Result": "Zeus",
-    "Components": [
-      "Deity",
       "Sky"
     ]
   },
@@ -11284,13 +11256,6 @@
     ]
   },
   {
-    "Result": "Cosmic egg",
-    "Components": [
-      "Egg",
-      "Deity"
-    ]
-  },
-  {
     "Result": "Electrician",
     "Components": [
       "Human",
@@ -12072,13 +12037,6 @@
     "Components": [
       "Wood",
       "Bow"
-    ]
-  },
-  {
-    "Result": "Jiangshi",
-    "Components": [
-      "Corpse",
-      "Curse"
     ]
   },
   {
@@ -14210,20 +14168,6 @@
     ]
   },
   {
-    "Result": "Cupid",
-    "Components": [
-      "Love",
-      "Deity"
-    ]
-  },
-  {
-    "Result": "Cupid",
-    "Components": [
-      "Angel",
-      "Deity"
-    ]
-  },
-  {
     "Result": "Meat",
     "Components": [
       "Tool",
@@ -15393,41 +15337,6 @@
     ]
   },
   {
-    "Result": "Heaven",
-    "Components": [
-      "House",
-      "Good"
-    ]
-  },
-  {
-    "Result": "Heaven",
-    "Components": [
-      "House",
-      "Deity"
-    ]
-  },
-  {
-    "Result": "Good",
-    "Components": [
-      "Angel",
-      "Love"
-    ]
-  },
-  {
-    "Result": "Deity",
-    "Components": [
-      "Human",
-      "Peach of immortality"
-    ]
-  },
-  {
-    "Result": "Deity",
-    "Components": [
-      "Human",
-      "Philosopher's stone"
-    ]
-  },
-  {
     "Result": "Ash",
     "Components": [
       "Fire",
@@ -15530,27 +15439,6 @@
     "Components": [
       "Human",
       "Bat"
-    ]
-  },
-  {
-    "Result": "Holy grail",
-    "Components": [
-      "Cup",
-      "Good"
-    ]
-  },
-  {
-    "Result": "Holy water",
-    "Components": [
-      "Water",
-      "Good"
-    ]
-  },
-  {
-    "Result": "Holy water",
-    "Components": [
-      "Water",
-      "Heaven"
     ]
   },
   {
@@ -15946,48 +15834,6 @@
     ]
   },
   {
-    "Result": "Paladin",
-    "Components": [
-      "Warrior",
-      "Holy grail"
-    ]
-  },
-  {
-    "Result": "Paladin",
-    "Components": [
-      "Warrior",
-      "Holy water"
-    ]
-  },
-  {
-    "Result": "Paladin",
-    "Components": [
-      "Warrior",
-      "Good"
-    ]
-  },
-  {
-    "Result": "Paladin",
-    "Components": [
-      "Knight",
-      "Holy grail"
-    ]
-  },
-  {
-    "Result": "Paladin",
-    "Components": [
-      "Knight",
-      "Holy water"
-    ]
-  },
-  {
-    "Result": "Paladin",
-    "Components": [
-      "Knight",
-      "Good"
-    ]
-  },
-  {
     "Result": "Catnip",
     "Components": [
       "Cat",
@@ -16013,13 +15859,6 @@
     "Components": [
       "Baast",
       "Plant"
-    ]
-  },
-  {
-    "Result": "Baast",
-    "Components": [
-      "Cat",
-      "Deity"
     ]
   },
   {
@@ -17451,13 +17290,6 @@
     ]
   },
   {
-    "Result": "Selkie",
-    "Components": [
-      "Monster",
-      "Seal"
-    ]
-  },
-  {
     "Result": "Moss",
     "Components": [
       "Stone",
@@ -18844,20 +18676,6 @@
     ]
   },
   {
-    "Result": "Necromancer",
-    "Components": [
-      "Wizard",
-      "Curse"
-    ]
-  },
-  {
-    "Result": "Necromancer",
-    "Components": [
-      "Witch",
-      "Curse"
-    ]
-  },
-  {
     "Result": "Alpaca",
     "Components": [
       "Sheep",
@@ -19198,20 +19016,6 @@
     "Components": [
       "Cockatrice",
       "Container"
-    ]
-  },
-  {
-    "Result": "Cockatrice",
-    "Components": [
-      "Monster",
-      "Chicken"
-    ]
-  },
-  {
-    "Result": "Cockatrice",
-    "Components": [
-      "Monster",
-      "Egg"
     ]
   },
   {
@@ -19786,13 +19590,6 @@
     "Components": [
       "Carbon dioxide",
       "Ice"
-    ]
-  },
-  {
-    "Result": "Elf",
-    "Components": [
-      "Faerie",
-      "Big"
     ]
   },
   {
@@ -21063,34 +20860,6 @@
     ]
   },
   {
-    "Result": "Troll",
-    "Components": [
-      "Monster",
-      "Bridge"
-    ]
-  },
-  {
-    "Result": "Troll",
-    "Components": [
-      "Monster",
-      "Cave"
-    ]
-  },
-  {
-    "Result": "Troll",
-    "Components": [
-      "Monster",
-      "Mountain"
-    ]
-  },
-  {
-    "Result": "Troll",
-    "Components": [
-      "Monster",
-      "Mountain range"
-    ]
-  },
-  {
     "Result": "Sushi",
     "Components": [
       "Fish",
@@ -21760,13 +21529,6 @@
     "Components": [
       "Tool",
       "Baba yaga"
-    ]
-  },
-  {
-    "Result": "Baba yaga",
-    "Components": [
-      "Witch",
-      "Monster"
     ]
   },
   {
@@ -23254,6 +23016,13 @@
     ]
   },
   {
+    "Result": "Batter",
+    "Components": [
+      "Ooze",
+      "Flour"
+    ]
+  },
+  {
     "Result": "Pizza",
     "Components": [
       "Cheese",
@@ -23678,6 +23447,13 @@
     "Components": [
       "Flour",
       "Rain"
+    ]
+  },
+  {
+    "Result": "Dough",
+    "Components": [
+      "Ooze",
+      "Flour"
     ]
   },
   {
@@ -24339,41 +24115,6 @@
     ]
   },
   {
-    "Result": "Dionysus",
-    "Components": [
-      "Deity",
-      "Fruit"
-    ]
-  },
-  {
-    "Result": "Dionysus",
-    "Components": [
-      "Deity",
-      "Wine"
-    ]
-  },
-  {
-    "Result": "Dionysus",
-    "Components": [
-      "Deity",
-      "Beer"
-    ]
-  },
-  {
-    "Result": "Dionysus",
-    "Components": [
-      "Deity",
-      "Alcohol"
-    ]
-  },
-  {
-    "Result": "Dionysus",
-    "Components": [
-      "Deity",
-      "Drunk"
-    ]
-  },
-  {
     "Result": "Writer",
     "Components": [
       "Human",
@@ -24490,6 +24231,13 @@
     "Components": [
       "Dough",
       "Chocolate"
+    ]
+  },
+  {
+    "Result": "Cookie dough",
+    "Components": [
+      "Ooze",
+      "Cookie"
     ]
   },
   {

@@ -18,6 +18,46 @@ type Element struct {
     URL  string
 }
 
+func ScrapeMythAndMonstersElements() ([]string, error) {
+	mythAndMonstersUrl := "https://little-alchemy.fandom.com/wiki/Category:Myths_and_Monsters"
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	res, err := client.Get(mythAndMonstersUrl)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch Myth and Monsters page: %w", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("page returned status: %d", res.StatusCode)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse page: %w", err)
+	}
+
+	var elements []string
+
+	doc.Find(".category-page__member-link").Each(func(i int, s *goquery.Selection) {
+		name := strings.TrimSpace(s.Text())
+		if name != "" {
+			elements = append(elements, name)
+		}
+	})
+
+	return elements, nil
+}
+
+func BuildMythAndMonstersBlacklist(elements []string) map[string]bool {
+	blacklist := make(map[string]bool)
+	for _, elem := range elements {
+		blacklist[elem] = true
+	}
+	return blacklist
+}
 
 // ScrapeElementList meng-scrape semua element dari halaman Little Alchemy 2
 func ScrapeElementList() ([]Element, error) {
@@ -45,6 +85,13 @@ func ScrapeElementList() ([]Element, error) {
 
     var elements []Element
 	seen := make(map[string]bool)
+    
+    myths, err := ScrapeMythAndMonstersElements()
+    if err != nil {
+        panic(err)
+    }
+
+    blacklist := BuildMythAndMonstersBlacklist(myths)
 
     doc.Find("a").Each(func(i int, s *goquery.Selection) {
         href, exists := s.Attr("href")
@@ -52,7 +99,7 @@ func ScrapeElementList() ([]Element, error) {
 
         if exists && titleExists && strings.HasPrefix(href, "/wiki/") {
             if !strings.Contains(href, ":") { 
-				if !seen[title] && title != "Elements (Little Alchemy 1)" && title != "Elements (Little Alchemy 2)" && title != "Elements (Myths and Monsters)"{ // Cek kalau belum pernah
+				if !blacklist[title] && !seen[title] && title != "Elements (Little Alchemy 1)" && title != "Elements (Little Alchemy 2)" && title != "Elements (Myths and Monsters)"{ // Cek kalau belum pernah
                     seen[title] = true
                     fullURL := baseURL + href
                     elements = append(elements, Element{
@@ -130,9 +177,20 @@ func ScrapeElementPage(elem Element, validElements map[string]bool) ([]Recipe, e
 }
 
 func ScrapeAllRecipes(elements []Element) ([]Recipe, error) {
+    myths, err := ScrapeMythAndMonstersElements()
+    if err != nil {
+        panic(err)
+    }
+
+    blacklist := BuildMythAndMonstersBlacklist(myths)
+
     validElements := make(map[string]bool)
     for _, elem := range elements {
         validElements[elem.Name] = true
+    }
+
+    for elem := range blacklist {
+        validElements[elem] = true
     }
 
     var allRecipes []Recipe
