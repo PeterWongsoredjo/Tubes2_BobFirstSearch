@@ -4,7 +4,7 @@ import (
     "encoding/json"
     "fmt"
     "os"
-    "backend/scraping"
+    "github.com/BobKunanda/Tubes2_BobFirstSearch/src/backend/scraping"
 )
 
 func main() {
