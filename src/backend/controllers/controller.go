@@ -7,89 +7,86 @@ import (
     "strings"
 )
 
-// Recipe represents one Little Alchemy combination result
-// and the two component names used to create it.
 type Recipe struct {
     Result     string   `json:"result"`
     Components []string `json:"components"`
 }
 
-// loadRecipes reads a JSON file at path and decodes it into []Recipe.
 func loadRecipes(path string) ([]Recipe, error) {
     f, err := os.Open(path)
     if err != nil {
         return nil, err
     }
     defer f.Close()
-
-    var recipes []Recipe
-    if err := json.NewDecoder(f).Decode(&recipes); err != nil {
+    var recs []Recipe
+    if err := json.NewDecoder(f).Decode(&recs); err != nil {
         return nil, err
     }
-    return recipes, nil
+    return recs, nil
 }
 
-// TreeNode represents one element and its recipe-components.
 type TreeNode struct {
     Name     string
     Children []*TreeNode
 }
 
-// makeNodeMap builds a map[name]*TreeNode so that every
-// element (result or component) gets exactly one TreeNode.
-func makeNodeMap(recipes []Recipe) map[string]*TreeNode {
-    nodes := make(map[string]*TreeNode, len(recipes))
-    for _, rec := range recipes {
-        if _, exists := nodes[rec.Result]; !exists {
-            nodes[rec.Result] = &TreeNode{Name: rec.Result}
+// 1) Build the raw forest with cycle-pruning (as before).
+func buildForest(recipes []Recipe) map[string]*TreeNode {
+    // make one node per element
+    nodes := map[string]*TreeNode{}
+    for _, r := range recipes {
+        if _, ok := nodes[r.Result]; !ok {
+            nodes[r.Result] = &TreeNode{Name: r.Result}
         }
-        for _, comp := range rec.Components {
-            if _, exists := nodes[comp]; !exists {
-                nodes[comp] = &TreeNode{Name: comp}
+        for _, c := range r.Components {
+            if _, ok := nodes[c]; !ok {
+                nodes[c] = &TreeNode{Name: c}
             }
         }
     }
-    return nodes
-}
 
-// hasPath checks whether 'target' is reachable from 'src' by following Children links.
-// It uses a visited map to avoid infinite loops.
-func hasPath(src, target *TreeNode, visited map[string]bool) bool {
-    if src == target {
-        return true
+    // dedupe recipes
+    uniq := []Recipe{}
+    seen := map[string]map[string]bool{}
+    for _, r := range recipes {
+        key := strings.Join(r.Components, "|")
+        if seen[r.Result] == nil {
+            seen[r.Result] = map[string]bool{}
+        }
+        if seen[r.Result][key] {
+            continue
+        }
+        seen[r.Result][key] = true
+        uniq = append(uniq, r)
     }
-    visited[src.Name] = true
 
-    for _, child := range src.Children {
-        if !visited[child.Name] {
-            if hasPath(child, target, visited) {
+    // attach edges, pruning any back-edge
+    added := map[string]map[string]bool{}
+    var hasPath func(src, tgt *TreeNode, vis map[string]bool) bool
+    hasPath = func(src, tgt *TreeNode, vis map[string]bool) bool {
+        if src == tgt {
+            return true
+        }
+        vis[src.Name] = true
+        for _, ch := range src.Children {
+            if !vis[ch.Name] && hasPath(ch, tgt, vis) {
                 return true
             }
         }
+        return false
     }
-    return false
-}
 
-// buildCompositionForest links every Recipe’s result node to its two component nodes,
-// but skips (prunes) any link that would create a cycle.
-func buildCompositionForest(recipes []Recipe) map[string]*TreeNode {
-    nodes := makeNodeMap(recipes)
-    // keep a set of edges we’ve already added
-    added := make(map[string]map[string]bool)
-
-    for _, rec := range recipes {
-        parent := nodes[rec.Result]
+    for _, r := range uniq {
+        parent := nodes[r.Result]
         if added[parent.Name] == nil {
-            added[parent.Name] = make(map[string]bool)
+            added[parent.Name] = map[string]bool{}
         }
-
-        for _, compName := range rec.Components {
-            child := nodes[compName]
-            // skip duplicate links
+        for _, c := range r.Components {
+            child := nodes[c]
             if added[parent.Name][child.Name] {
-                continue
+                continue // duplicate
             }
-            // skip any link that creates a path back to parent
+            // prune cycles
             if hasPath(child, parent, map[string]bool{}) {
                 continue
             }
@@ -97,64 +94,79 @@ func buildCompositionForest(recipes []Recipe) map[string]*TreeNode {
             added[parent.Name][child.Name] = true
         }
     }
+
     return nodes
 }
 
-
-// findRoots finds all nodes with zero incoming edges.
-// It first tallies indegrees, then returns those with indegree==0.
+// 2) Find your tier-14 “roots”: those with no incoming edges.
 func findRoots(forest map[string]*TreeNode) []*TreeNode {
-    indegree := make(map[string]int, len(forest))
-    for name := range forest {
-        indegree[name] = 0
+    indeg := map[string]int{}
+    for n := range forest {
+        indeg[n] = 0
     }
     for _, node := range forest {
-        for _, child := range node.Children {
-            indegree[child.Name]++
+        for _, ch := range node.Children {
+            indeg[ch.Name]++
         }
     }
-
     var roots []*TreeNode
     for name, node := range forest {
-        if indegree[name] == 0 {
+        if indeg[name] == 0 {
             roots = append(roots, node)
         }
     }
     return roots
 }
 
-// printTree recursively prints each node and its children, indenting by level.
-func printTree(node *TreeNode, level int, visited map[string]bool) {
-    indent := strings.Repeat("  ", level)
-    // have we printed this node already in *this* branch?
-    if visited[node.Name] {
-        fmt.Printf("%s%s (↩ cycle)\n", indent, node.Name)
-        return
+// 3) BFS-build a true tree per root, never revisiting a node in that tree.
+func buildBFSTrees(forest map[string]*TreeNode, roots []*TreeNode) []*TreeNode {
+    var trees []*TreeNode
+    for _, root := range roots {
+        // copy root
+        rootCopy := &TreeNode{Name: root.Name}
+        queue := []*TreeNode{rootCopy}
+        visited := map[string]bool{root.Name: true}
+        // map from name→copy to link children
+        copyMap := map[string]*TreeNode{root.Name: rootCopy}
+
+        for i := 0; i < len(queue); i++ {
+            curr := queue[i]
+            orig := forest[curr.Name]
+            for _, ch := range orig.Children {
+                if visited[ch.Name] {
+                    continue
+                }
+                visited[ch.Name] = true
+                childCopy := &TreeNode{Name: ch.Name}
+                curr.Children = append(curr.Children, childCopy)
+                queue = append(queue, childCopy)
+                copyMap[ch.Name] = childCopy
+            }
+        }
+        trees = append(trees, rootCopy)
     }
-    fmt.Printf("%s%s\n", indent, node.Name)
-    // mark it in this branch, recurse, then unmark
-    visited[node.Name] = true
-    for _, child := range node.Children {
-        printTree(child, level+1, visited)
-    }
-    delete(visited, node.Name)
+    return trees
 }
 
+// 4) Print your BFS-built trees (now truly acyclic).
+func printTree(node *TreeNode, level int) {
+    fmt.Printf("%s%s\n", strings.Repeat("  ", level), node.Name)
+    for _, ch := range node.Children {
+        printTree(ch, level+1)
+    }
+}
 
 func main() {
-    // 1. Load recipes from JSON
     recipes, err := loadRecipes("../recipes.json")
     if err != nil {
         panic(err)
     }
-    // 2. Build forest with cycle-pruning
-    forest := buildCompositionForest(recipes)
 
-    // 3. Find root/base elements (no incoming edges)
+    forest := buildForest(recipes)
     roots := findRoots(forest)
+    trees := buildBFSTrees(forest, roots)
 
-    // 4. Print each tree
-    for _, root := range roots {
-        printTree(root, 0, make(map[string]bool))
+    for _, t := range trees {
+        printTree(t, 0)
     }
 }
