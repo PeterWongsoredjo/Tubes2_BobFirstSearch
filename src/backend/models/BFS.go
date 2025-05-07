@@ -14,6 +14,7 @@ var baseElements = map[string]bool{
     "Fire":  true,
     "Air":   true,
     "Earth": true,
+	"Time":  true,
 }
 
 type Recipe struct {
@@ -130,7 +131,7 @@ func printTree(n *TreeNode, level int) {
 }
 
 func main() {
-    recipes, err := loadRecipes("../recipes.json")
+    recipes, err := loadRecipes("../configs/recipes.json")
     if err != nil {
         fmt.Fprintf(os.Stderr, "error loading recipes: %v\n", err)
         os.Exit(1)
