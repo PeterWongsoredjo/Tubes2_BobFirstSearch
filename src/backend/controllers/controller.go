@@ -74,21 +74,32 @@ func hasPath(src, target *TreeNode, visited map[string]bool) bool {
 // but skips (prunes) any link that would create a cycle.
 func buildCompositionForest(recipes []Recipe) map[string]*TreeNode {
     nodes := makeNodeMap(recipes)
+    // keep a set of edges we’ve already added
+    added := make(map[string]map[string]bool)
 
     for _, rec := range recipes {
         parent := nodes[rec.Result]
+        if added[parent.Name] == nil {
+            added[parent.Name] = make(map[string]bool)
+        }
+
         for _, compName := range rec.Components {
             child := nodes[compName]
-
-            // cycle-pruning: if 'child' already reaches 'parent', skip
-            if hasPath(child, parent, make(map[string]bool)) {
+            // skip duplicate links
+            if added[parent.Name][child.Name] {
+                continue
+            }
+            // skip any link that creates a path back to parent
+            if hasPath(child, parent, map[string]bool{}) {
                 continue
             }
             parent.Children = append(parent.Children, child)
+            added[parent.Name][child.Name] = true
         }
     }
     return nodes
 }
+
 
 // findRoots finds all nodes with zero incoming edges.
 // It first tallies indegrees, then returns those with indegree==0.
@@ -113,12 +124,22 @@ func findRoots(forest map[string]*TreeNode) []*TreeNode {
 }
 
 // printTree recursively prints each node and its children, indenting by level.
-func printTree(node *TreeNode, level int) {
-    fmt.Printf("%s%s\n", strings.Repeat("  ", level), node.Name)
-    for _, child := range node.Children {
-        printTree(child, level+1)
+func printTree(node *TreeNode, level int, visited map[string]bool) {
+    indent := strings.Repeat("  ", level)
+    // have we printed this node already in *this* branch?
+    if visited[node.Name] {
+        fmt.Printf("%s%s (↩ cycle)\n", indent, node.Name)
+        return
     }
+    fmt.Printf("%s%s\n", indent, node.Name)
+    // mark it in this branch, recurse, then unmark
+    visited[node.Name] = true
+    for _, child := range node.Children {
+        printTree(child, level+1, visited)
+    }
+    delete(visited, node.Name)
 }
+
 
 func main() {
     // 1. Load recipes from JSON
@@ -134,6 +155,6 @@ func main() {
 
     // 4. Print each tree
     for _, root := range roots {
-        printTree(root, 0)
+        printTree(root, 0, make(map[string]bool))
     }
 }
