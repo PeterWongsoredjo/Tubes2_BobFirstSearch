@@ -1057,20 +1057,6 @@
     ]
   },
   {
-    "Result": "Wood",
-    "Components": [
-      "Tree",
-      "Paul bunyan"
-    ]
-  },
-  {
-    "Result": "Wood",
-    "Components": [
-      "Forest",
-      "Paul bunyan"
-    ]
-  },
-  {
     "Result": "Brick",
     "Components": [
       "Mud",
@@ -2433,20 +2419,6 @@
     "Components": [
       "Land",
       "Storm"
-    ]
-  },
-  {
-    "Result": "Lightning",
-    "Components": [
-      "Zeus",
-      "Tool"
-    ]
-  },
-  {
-    "Result": "Lightning",
-    "Components": [
-      "Cyclops",
-      "Tool"
     ]
   },
   {
@@ -3983,27 +3955,6 @@
     ]
   },
   {
-    "Result": "Gold",
-    "Components": [
-      "Metal",
-      "Philosopher's stone"
-    ]
-  },
-  {
-    "Result": "Gold",
-    "Components": [
-      "Steel",
-      "Philosopher's stone"
-    ]
-  },
-  {
-    "Result": "Gold",
-    "Components": [
-      "Quicksilver",
-      "Philosopher's stone"
-    ]
-  },
-  {
     "Result": "Rainbow",
     "Components": [
       "Rain",
@@ -4582,13 +4533,6 @@
     "Components": [
       "Planet",
       "Gas"
-    ]
-  },
-  {
-    "Result": "Jupiter",
-    "Components": [
-      "Planet",
-      "Zeus"
     ]
   },
   {
@@ -5866,20 +5810,6 @@
     ]
   },
   {
-    "Result": "Bow",
-    "Components": [
-      "Tool",
-      "Elf"
-    ]
-  },
-  {
-    "Result": "Bow",
-    "Components": [
-      "Tool",
-      "Cupid"
-    ]
-  },
-  {
     "Result": "Hourglass",
     "Components": [
       "Sand",
@@ -5926,20 +5856,6 @@
     "Components": [
       "Volcano",
       "Ocean"
-    ]
-  },
-  {
-    "Result": "Island",
-    "Components": [
-      "Maui's fishhook",
-      "Ocean"
-    ]
-  },
-  {
-    "Result": "Island",
-    "Components": [
-      "Maui's fishhook",
-      "Sea"
     ]
   },
   {
@@ -6363,13 +6279,6 @@
     ]
   },
   {
-    "Result": "Pyramid",
-    "Components": [
-      "Container",
-      "Book of the dead"
-    ]
-  },
-  {
     "Result": "Grave",
     "Components": [
       "Earth",
@@ -6542,20 +6451,6 @@
     "Components": [
       "Corpse",
       "Fabric"
-    ]
-  },
-  {
-    "Result": "Mummy",
-    "Components": [
-      "Corpse",
-      "Book of the dead"
-    ]
-  },
-  {
-    "Result": "Mummy",
-    "Components": [
-      "Human",
-      "Book of the dead"
     ]
   },
   {
@@ -7609,13 +7504,6 @@
     ]
   },
   {
-    "Result": "Universe",
-    "Components": [
-      "Primordial soup",
-      "Cosmic egg"
-    ]
-  },
-  {
     "Result": "Meteor",
     "Components": [
       "Meteoroid",
@@ -7933,13 +7821,6 @@
   {
     "Result": "Barn",
     "Components": [
-      "House",
-      "Babe the blue ox"
-    ]
-  },
-  {
-    "Result": "Barn",
-    "Components": [
       "Container",
       "Livestock"
     ]
@@ -7991,13 +7872,6 @@
     "Components": [
       "Container",
       "Goat"
-    ]
-  },
-  {
-    "Result": "Barn",
-    "Components": [
-      "Container",
-      "Babe the blue ox"
     ]
   },
   {
@@ -8400,13 +8274,6 @@
     ]
   },
   {
-    "Result": "Axe",
-    "Components": [
-      "Tool",
-      "Paul bunyan"
-    ]
-  },
-  {
     "Result": "Bell",
     "Components": [
       "Sound",
@@ -8705,20 +8572,6 @@
     "Components": [
       "Story",
       "Unicorn"
-    ]
-  },
-  {
-    "Result": "Fairy tale",
-    "Components": [
-      "Story",
-      "Faerie"
-    ]
-  },
-  {
-    "Result": "Fairy tale",
-    "Components": [
-      "Story",
-      "Elf"
     ]
   },
   {
@@ -9716,34 +9569,6 @@
     ]
   },
   {
-    "Result": "Castle",
-    "Components": [
-      "Paladin",
-      "Stone"
-    ]
-  },
-  {
-    "Result": "Castle",
-    "Components": [
-      "Paladin",
-      "Wall"
-    ]
-  },
-  {
-    "Result": "Castle",
-    "Components": [
-      "Paladin",
-      "House"
-    ]
-  },
-  {
-    "Result": "Castle",
-    "Components": [
-      "Paladin",
-      "Container"
-    ]
-  },
-  {
     "Result": "Hospital",
     "Components": [
       "House",
@@ -10448,20 +10273,6 @@
     "Components": [
       "Human",
       "Arrow"
-    ]
-  },
-  {
-    "Result": "Corpse",
-    "Components": [
-      "Jiangshi",
-      "Mirror"
-    ]
-  },
-  {
-    "Result": "Corpse",
-    "Components": [
-      "Jiangshi",
-      "Peach of immortality"
     ]
   },
   {
@@ -12019,13 +11830,6 @@
     ]
   },
   {
-    "Result": "Grim reaper",
-    "Components": [
-      "Death",
-      "Deity"
-    ]
-  },
-  {
     "Result": "Arrow",
     "Components": [
       "Wood",
@@ -13517,20 +13321,6 @@
     ]
   },
   {
-    "Result": "Love",
-    "Components": [
-      "Cupid",
-      "Bow"
-    ]
-  },
-  {
-    "Result": "Love",
-    "Components": [
-      "Cupid",
-      "Arrow"
-    ]
-  },
-  {
     "Result": "Pitchfork",
     "Components": [
       "Hay",
@@ -13549,13 +13339,6 @@
     "Components": [
       "Hay",
       "Steel"
-    ]
-  },
-  {
-    "Result": "Pitchfork",
-    "Components": [
-      "Tool",
-      "Demon"
     ]
   },
   {
@@ -15309,34 +15092,6 @@
     ]
   },
   {
-    "Result": "Angel",
-    "Components": [
-      "Human",
-      "Heaven"
-    ]
-  },
-  {
-    "Result": "Angel",
-    "Components": [
-      "Human",
-      "Good"
-    ]
-  },
-  {
-    "Result": "Angel",
-    "Components": [
-      "Good",
-      "Demon"
-    ]
-  },
-  {
-    "Result": "Angel",
-    "Components": [
-      "Good",
-      "Deity"
-    ]
-  },
-  {
     "Result": "Ash",
     "Components": [
       "Fire",
@@ -15411,20 +15166,6 @@
     "Components": [
       "Vampire",
       "Dawn"
-    ]
-  },
-  {
-    "Result": "Ash",
-    "Components": [
-      "Vampire",
-      "Holy grail"
-    ]
-  },
-  {
-    "Result": "Ash",
-    "Components": [
-      "Vampire",
-      "Holy water"
     ]
   },
   {
@@ -15852,13 +15593,6 @@
     "Components": [
       "Cat",
       "Flower"
-    ]
-  },
-  {
-    "Result": "Catnip",
-    "Components": [
-      "Baast",
-      "Plant"
     ]
   },
   {
@@ -16492,20 +16226,6 @@
     ]
   },
   {
-    "Result": "Frankenstein's monster",
-    "Components": [
-      "Monster",
-      "Story"
-    ]
-  },
-  {
-    "Result": "Frankenstein's monster",
-    "Components": [
-      "Monster",
-      "Corpse"
-    ]
-  },
-  {
     "Result": "Zombie",
     "Components": [
       "Corpse",
@@ -16524,13 +16244,6 @@
     "Components": [
       "Corpse",
       "Bacteria"
-    ]
-  },
-  {
-    "Result": "Zombie",
-    "Components": [
-      "Corpse",
-      "Necromancer"
     ]
   },
   {
@@ -16669,13 +16382,6 @@
   {
     "Result": "Ghost",
     "Components": [
-      "Graveyard",
-      "Curse"
-    ]
-  },
-  {
-    "Result": "Ghost",
-    "Components": [
       "Grave",
       "Night"
     ]
@@ -16692,13 +16398,6 @@
     "Components": [
       "Grave",
       "Legend"
-    ]
-  },
-  {
-    "Result": "Ghost",
-    "Components": [
-      "Grave",
-      "Curse"
     ]
   },
   {
@@ -17278,13 +16977,6 @@
   {
     "Result": "Mermaid",
     "Components": [
-      "Fish",
-      "Selkie"
-    ]
-  },
-  {
-    "Result": "Mermaid",
-    "Components": [
       "Swimmer",
       "Magic"
     ]
@@ -17657,125 +17349,6 @@
     "Result": "Statue",
     "Components": [
       "Medusa",
-      "Mirror"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Troll",
-      "Sun"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Troll",
-      "Dawn"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Human"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Hacker"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Engineer"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Lumberjack"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Pilot"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Sailor"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Farmer"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Firefighter"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Surfer"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Astronaut"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Butcher"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Doctor"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Baker"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
-      "Drunk"
-    ]
-  },
-  {
-    "Result": "Statue",
-    "Components": [
-      "Cockatrice",
       "Mirror"
     ]
   },
@@ -18641,13 +18214,6 @@
     ]
   },
   {
-    "Result": "Werewolf",
-    "Components": [
-      "Wolf",
-      "Monster"
-    ]
-  },
-  {
     "Result": "Wild boar",
     "Components": [
       "Pig",
@@ -18994,27 +18560,6 @@
     "Result": "Chicken coop",
     "Components": [
       "Chicken",
-      "Container"
-    ]
-  },
-  {
-    "Result": "Chicken coop",
-    "Components": [
-      "Cockatrice",
-      "House"
-    ]
-  },
-  {
-    "Result": "Chicken coop",
-    "Components": [
-      "Cockatrice",
-      "Barn"
-    ]
-  },
-  {
-    "Result": "Chicken coop",
-    "Components": [
-      "Cockatrice",
       "Container"
     ]
   },
@@ -19782,13 +19327,6 @@
     ]
   },
   {
-    "Result": "Music",
-    "Components": [
-      "Harp",
-      "Heaven"
-    ]
-  },
-  {
     "Result": "Musician",
     "Components": [
       "Human",
@@ -20090,20 +19628,6 @@
     ]
   },
   {
-    "Result": "Kaiju",
-    "Components": [
-      "Monster",
-      "City"
-    ]
-  },
-  {
-    "Result": "Kaiju",
-    "Components": [
-      "Monster",
-      "Skyscraper"
-    ]
-  },
-  {
     "Result": "Lasso",
     "Components": [
       "Rope",
@@ -20269,13 +19793,6 @@
     "Components": [
       "Cow",
       "Legend"
-    ]
-  },
-  {
-    "Result": "Minotaur",
-    "Components": [
-      "Cow",
-      "Monster"
     ]
   },
   {
@@ -21126,34 +20643,6 @@
     ]
   },
   {
-    "Result": "Yeti",
-    "Components": [
-      "Monster",
-      "Mountain"
-    ]
-  },
-  {
-    "Result": "Yeti",
-    "Components": [
-      "Monster",
-      "Mountain range"
-    ]
-  },
-  {
-    "Result": "Yeti",
-    "Components": [
-      "Monster",
-      "Glacier"
-    ]
-  },
-  {
-    "Result": "Yeti",
-    "Components": [
-      "Monster",
-      "Antarctica"
-    ]
-  },
-  {
     "Result": "Zoo",
     "Components": [
       "Animal",
@@ -21483,20 +20972,6 @@
     ]
   },
   {
-    "Result": "Wine",
-    "Components": [
-      "Tool",
-      "Dionysus"
-    ]
-  },
-  {
-    "Result": "Wine",
-    "Components": [
-      "Tool",
-      "Dionysus"
-    ]
-  },
-  {
     "Result": "Beer",
     "Components": [
       "Alcohol",
@@ -21522,13 +20997,6 @@
     "Components": [
       "Wood",
       "Hay"
-    ]
-  },
-  {
-    "Result": "Broom",
-    "Components": [
-      "Tool",
-      "Baba yaga"
     ]
   },
   {
@@ -23016,13 +22484,6 @@
     ]
   },
   {
-    "Result": "Batter",
-    "Components": [
-      "Ooze",
-      "Flour"
-    ]
-  },
-  {
     "Result": "Pizza",
     "Components": [
       "Cheese",
@@ -23447,13 +22908,6 @@
     "Components": [
       "Flour",
       "Rain"
-    ]
-  },
-  {
-    "Result": "Dough",
-    "Components": [
-      "Ooze",
-      "Flour"
     ]
   },
   {
@@ -24231,13 +23685,6 @@
     "Components": [
       "Dough",
       "Chocolate"
-    ]
-  },
-  {
-    "Result": "Cookie dough",
-    "Components": [
-      "Ooze",
-      "Cookie"
     ]
   },
   {
