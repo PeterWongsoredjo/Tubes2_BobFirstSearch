@@ -11,14 +11,11 @@ import (
 )
 
 func getProjectRoot() string {
-	// Get the path to this current file (main.go)
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		log.Fatal("Could not get current file path")
 	}
 
-	// Go up 3 levels from cmd/ to reach project root
-	// src/backend/cmd -> src/backend -> src -> project root
 	projectRoot := filepath.Dir(filepath.Dir(filepath.Dir(filename)))
 	return filepath.Join(projectRoot, "backend", "configs")
 }
@@ -52,12 +49,10 @@ func main() {
 		panic(fmt.Errorf("failed to save recipes to file: %w", err))
 	}
 
-    fmt.Println("Done! Recipes saved to recipes.json ✅")
+    fmt.Println("Done! Recipes saved to recipes.json")
 }
 
-// saveRecipesToFile saves the recipes to a JSON file
 func saveRecipesToFile(filename string, recipes []scraping.Recipe) error {
-	// Create directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(filename), 0755); err != nil {
 		return err
 	}

@@ -15,7 +15,6 @@ func main() {
     url := "https://little-alchemy.fandom.com/wiki/Elements_(Little_Alchemy_2)"
     fmt.Println("Fetching:", url)
 
-    // Fetch the webpage
     resp, err := http.Get(url)
     if err != nil {
         log.Fatalf("Failed to fetch page: %v", err)
@@ -26,18 +25,15 @@ func main() {
         log.Fatalf("Status code error: %d %s", resp.StatusCode, resp.Status)
     }
 
-    // Load the HTML document
     doc, err := goquery.NewDocumentFromReader(resp.Body)
     if err != nil {
         log.Fatal(err)
     }
 
-    // Create folder for images
     os.MkdirAll("images", os.ModePerm)
 
 	downloadedImg := make(map[string]bool)
 
-    // Select and download each image
     doc.Find("a.mw-file-description").Each(func(i int, s *goquery.Selection) {
         src, exists := s.Attr("href")
         if exists && strings.HasPrefix(src, "https") && !downloadedImg[src]{
@@ -49,7 +45,6 @@ func main() {
 	
 }
 
-// downloadImage downloads an image and saves it to the "images" folder
 func downloadImage(url string) {
     resp, err := http.Get(url)
     if err != nil {
@@ -69,7 +64,6 @@ func downloadImage(url string) {
         return
     }
 
-    // Try to extract the <title> tag for the correct name
     title := extractSVGTitle(string(body))
     if title == "" {
         title = "unknown"

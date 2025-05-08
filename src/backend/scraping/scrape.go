@@ -9,8 +9,8 @@ import (
 )
 
 type Recipe struct {
-    Result    string   // Hasil kombinasi
-    Components []string // Komponen yang harus dikombinasikan
+    Result    string   
+    Components []string 
 }
 
 type Element struct {
