@@ -80,14 +80,6 @@
   }
 }
 
-.glow-text {
-  text-shadow: 0 0 5px rgba(234, 179, 8, 0.3), 0 0 20px rgba(234, 179, 8, 0.2);
-}
-
-.glow-border {
-  box-shadow: 0 0 5px rgba(234, 179, 8, 0.3), 0 0 20px rgba(234, 179, 8, 0.2);
-}
-
 .celestial-background {
   position: relative;
 }

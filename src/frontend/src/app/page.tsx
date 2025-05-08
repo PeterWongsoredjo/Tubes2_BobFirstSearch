@@ -1,23 +1,17 @@
 import { SearchPanel } from "@/components/SearchPanel"
 import { RecipeTree } from "@/components/RecipeTree"
 import { StatsPanel } from "@/components/StatsPanel"
-import { Navbar } from "@/components/navbar"
+import { MainTitle } from "@/components/MainTitle"
 
 export default function Home() {
   return (
-    <main className="min-h-screen celestial-background">
-      <Navbar />
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="space-y-8">
+    <main className="min-h-screen celestial-background pt-8">
+      <div className="container mx-auto px-4 py-4 max-w-6xl">
+        <MainTitle />
+        <div className="space-y-8 mt-6">
           <SearchPanel />
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="md:col-span-2">
-              <RecipeTree />
-            </div>
-            <div>
-              <StatsPanel />
-            </div>
-          </div>
+          <RecipeTree />
+          <StatsPanel />
         </div>
       </div>
     </main>
