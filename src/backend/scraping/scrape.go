@@ -149,7 +149,7 @@ func ScrapeElementPage(elem Element, validElements map[string]bool) ([]Recipe, e
                     var components []string
                     li.Find("a").Each(func(k int, a *goquery.Selection) {
                         name := strings.TrimSpace(a.Text())
-                        if name != "" {
+                        if name != ""{
                             components = append(components, name)
                         }
                     })
@@ -190,7 +190,7 @@ func ScrapeAllRecipes(elements []Element) ([]Recipe, error) {
     }
 
     for elem := range blacklist {
-        validElements[elem] = true
+        validElements[elem] = false;
     }
 
     var allRecipes []Recipe
