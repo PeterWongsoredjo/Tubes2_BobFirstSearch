@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" })
 
 export const metadata: Metadata = {
-  title: "Little Alchemy 2 Recipe Search",
-  description: "Find recipes and combinations for Little Alchemy 2 elements",
+  title: "Bob First Search",
+  description: "Find recipes and combinations for Little Alchemy 2 using BFS, DFS, or Bidirectional Search.",
 }
 
 export default function RootLayout({
