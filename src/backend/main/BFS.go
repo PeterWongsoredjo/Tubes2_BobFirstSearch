@@ -5,6 +5,7 @@ import (
     "fmt"
     "os"
     "strings"
+    "encoding/json"
 )
 
 type QueueItem struct {
@@ -30,7 +31,21 @@ func buildIndex(recipes []Recipe) map[string][][]string {
     return idx
 }
 
-func findShortest(target string, idx map[string][][]string) ([]Recipe, bool) {
+func loadTiers(path string) (map[string]int, error) {
+    f, err := os.Open(path)
+    if err != nil {
+        return nil, err
+    }
+    defer f.Close()
+    var tiers map[string]int
+    if err := json.NewDecoder(f).Decode(&tiers); err != nil {
+        return nil, err
+    }
+    return tiers, nil
+}
+
+
+func findShortest(target string, idx map[string][][]string, tiers map[string]int) ([]Recipe, bool) {
     queue := []QueueItem{{Elem: target, Chain: nil, Depth: 0}}
 
     for len(queue) > 0 {
@@ -42,6 +57,11 @@ func findShortest(target string, idx map[string][][]string) ([]Recipe, bool) {
             recipes := idx[item.Elem]
             for _, comps := range recipes {
                 c1, c2 := comps[0], comps[1]
+
+                tTier := tiers[item.Elem]
+                if tiers[c1] > tTier || tiers[c2] > tTier {
+                    continue
+                }
                 if baseElements[c1] && baseElements[c2] {
                     chain := append([]Recipe{}, item.Chain...)
                     chain = append(chain, Recipe{Result: item.Elem, Components: comps})
@@ -67,11 +87,11 @@ func findShortest(target string, idx map[string][][]string) ([]Recipe, bool) {
     return nil, false
 }
 
-func printFullChain(elem string, idx map[string][][]string, printed map[string]bool, indent string) {
+func printFullChain(elem string, idx map[string][][]string, tiers map[string]int, printed map[string]bool, indent string) {
     if printed[elem] {
         return
     }
-    chain, ok := findShortest(elem, idx)
+    chain, ok := findShortest(elem, idx, tiers)
     if !ok {
         fmt.Printf("%sno path found to %q\n", indent, elem)
         return
@@ -90,7 +110,7 @@ func printFullChain(elem string, idx map[string][][]string, printed map[string]b
     for _, r := range chain {
         for _, comp := range r.Components {
             if !baseElements[comp] {
-                printFullChain(comp, idx, printed, indent+"  ")
+                printFullChain(comp, idx, tiers, printed, indent+"  ")
             }
         }
     }
@@ -107,6 +127,11 @@ func maina() {
         fmt.Fprintf(os.Stderr, "error loading recipes: %v\n", err)
         os.Exit(1)
     }
+    tiers, err := loadTiers("configs/tiers.json")
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "error loading tiers: %v\n", err)
+        os.Exit(1)
+    }
     idx := buildIndex(recipes)
 
     fmt.Print("Enter target element: ")
@@ -116,7 +141,7 @@ func maina() {
 
     printed := make(map[string]bool)
     fmt.Println("Shortest recipe chain:")
-    printFullChain(target, idx, printed, "")
+    printFullChain(target, idx, tiers, printed, "")
 
     /*
     if *mode == "shortest" {
