@@ -157,7 +157,7 @@ func printTree(node *TreeNode, level int) {
 }
 
 func main() {
-    recipes, err := loadRecipes("../recipes.json")
+    recipes, err := loadRecipes("../configs/recipes.json")
     if err != nil {
         panic(err)
     }
