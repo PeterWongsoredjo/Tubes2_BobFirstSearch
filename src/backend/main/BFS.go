@@ -3,7 +3,6 @@ package main
 import (
     "bufio"
     "encoding/json"
-    "flag"
     "fmt"
     "os"
     "strings"
@@ -14,7 +13,7 @@ var baseElements = map[string]bool{
     "Fire":  true,
     "Air":   true,
     "Earth": true,
-    "Time": true,
+    "Time":  true,
 }
 
 type Recipe struct {
@@ -22,10 +21,10 @@ type Recipe struct {
     Components []string `json:"components"`
 }
 
-// Path is a sequence of element names from a base up to some element
-// Combined via recipes, recorded as pairs.
-type Path struct {
-    Steps []Recipe
+type QueueItem struct {
+    Elem  string
+    Chain []Recipe
+    Depth int
 }
 
 func loadRecipes(path string) ([]Recipe, error) {
@@ -41,7 +40,6 @@ func loadRecipes(path string) ([]Recipe, error) {
     return recs, nil
 }
 
-// index recipes by output element
 func buildIndex(recipes []Recipe) map[string][][]string {
     idx := make(map[string][][]string)
     seen := map[string]map[string]bool{}
@@ -59,43 +57,36 @@ func buildIndex(recipes []Recipe) map[string][][]string {
     return idx
 }
 
-// BFS for shortest single recipe chain
 func findShortest(target string, idx map[string][][]string) ([]Recipe, bool) {
-    type queueItem struct {
-        Current string
-        Chain   []Recipe
-    }
-    visited := map[string]bool{target: true}
-    queue := []queueItem{{Current: target, Chain: nil}}
+    queue := []QueueItem{{Elem: target, Chain: nil, Depth: 0}}
 
     for len(queue) > 0 {
-        item := queue[0]
-        queue = queue[1:]
+        levelSize := len(queue)
+        for i := 0; i < levelSize; i++ {
+            item := queue[0]
+            queue = queue[1:]
 
-        if baseElements[item.Current] {
-            // reached a base element: return the chain reversed
-            // chain holds recipes from target downwards
-            // reverse order to show from base -> target
-            for i, j := 0, len(item.Chain)-1; i < j; i, j = i+1, j-1 {
-                item.Chain[i], item.Chain[j] = item.Chain[j], item.Chain[i]
-            }
-            return item.Chain, true
-        }
-
-        for _, comps := range idx[item.Current] {
-            // expand each recipe
-            for _, c := range comps {
-                if visited[c] {
-                    continue
+            recipes := idx[item.Elem]
+            for _, comps := range recipes {
+                c1, c2 := comps[0], comps[1]
+                if baseElements[c1] && baseElements[c2] {
+                    chain := append([]Recipe{}, item.Chain...)
+                    chain = append(chain, Recipe{Result: item.Elem, Components: comps})
+                    return chain, true
                 }
-            }
-            // enqueue this recipe
-            newChain := append([]Recipe{}, item.Chain...)
-            newChain = append(newChain, Recipe{Result: item.Current, Components: comps})
-            for _, comp := range comps {
-                if !visited[comp] {
-                    visited[comp] = true
-                    queue = append(queue, queueItem{Current: comp, Chain: newChain})
+                newChain := append([]Recipe{}, item.Chain...)
+                newChain = append(newChain, Recipe{Result: item.Elem, Components: comps})
+
+                if !baseElements[c1] {
+                    queue = append(queue, QueueItem{Elem: c1, Chain: newChain, Depth: item.Depth + 1})
+                } else {
+                    newChainC1 := append([]Recipe{}, newChain...)
+                    newChainC1 = append(newChainC1, Recipe{Result: c1, Components: []string{}})
+                    queue = append(queue, QueueItem{Elem: c2, Chain: newChainC1, Depth: item.Depth + 1})
+                }
+
+                if !baseElements[c2] && !baseElements[c1] {
+                    queue = append(queue, QueueItem{Elem: c2, Chain: newChain, Depth: item.Depth + 1})
                 }
             }
         }
@@ -103,48 +94,42 @@ func findShortest(target string, idx map[string][][]string) ([]Recipe, bool) {
     return nil, false
 }
 
-// BFS for multiple recipe chains
-func findAll(target string, idx map[string][][]string, max int) [][]Recipe {
-    type queueItem struct {
-        Current string
-        Chain   []Recipe
+func printFullChain(elem string, idx map[string][][]string, printed map[string]bool, indent string) {
+    if printed[elem] {
+        return
     }
-    results := make([][]Recipe, 0, max)
-    queue := []queueItem{{Current: target, Chain: nil}}
-
-    for len(queue) > 0 && len(results) < max {
-        item := queue[0]
-        queue = queue[1:]
-
-        if baseElements[item.Current] {
-            // found a full chain
-            chainCopy := append([]Recipe{}, item.Chain...)
-            // reverse to base->target
-            for i, j := 0, len(chainCopy)-1; i < j; i, j = i+1, j-1 {
-                chainCopy[i], chainCopy[j] = chainCopy[j], chainCopy[i]
-            }
-            results = append(results, chainCopy)
+    chain, ok := findShortest(elem, idx)
+    if !ok {
+        fmt.Printf("%sno path found to %q\n", indent, elem)
+        return
+    }
+    for _, r := range chain {
+        if printed[r.Result] {
             continue
         }
-
-        for _, comps := range idx[item.Current] {
-            newChain := append([]Recipe{}, item.Chain...)
-            newChain = append(newChain, Recipe{Result: item.Current, Components: comps})
-            for _, comp := range comps {
-                queue = append(queue, queueItem{Current: comp, Chain: newChain})
+        if len(r.Components) < 2 {
+            fmt.Printf("%s%s is a base element\n", indent, r.Result)
+        } else {
+            fmt.Printf("%s%s = %s + %s\n", indent, r.Result, r.Components[0], r.Components[1])
+        }
+        printed[r.Result] = true
+    }
+    for _, r := range chain {
+        for _, comp := range r.Components {
+            if !baseElements[comp] {
+                printFullChain(comp, idx, printed, indent+"  ")
             }
         }
     }
-    return results
 }
 
 func main() {
     // flags
-    mode := flag.String("mode", "shortest", "search mode: shortest or all")
-    maxR := flag.Int("max", 5, "max recipes to find when mode=all")
-    flag.Parse()
+    //mode := flag.String("mode", "shortest", "search mode: shortest or all")
+    //maxR := flag.Int("max", 5, "max recipes to find when mode=all")
+    //flag.Parse()
 
-    recipes, err := loadRecipes("../configs/recipes.json")
+    recipes, err := loadRecipes("configs/recipes.json")
     if err != nil {
         fmt.Fprintf(os.Stderr, "error loading recipes: %v\n", err)
         os.Exit(1)
@@ -156,6 +141,11 @@ func main() {
     input, _ := reader.ReadString('\n')
     target := strings.TrimSpace(input)
 
+    printed := make(map[string]bool)
+    fmt.Println("Shortest recipe chain:")
+    printFullChain(target, idx, printed, "")
+
+    /*
     if *mode == "shortest" {
         chain, ok := findShortest(target, idx)
         if !ok {
@@ -180,4 +170,5 @@ func main() {
             }
         }
     }
+        */
 }
