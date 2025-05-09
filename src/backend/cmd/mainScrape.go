@@ -40,7 +40,6 @@ func saveJSON(path string, v interface{}) {
 func main() {
     cfgDir := getConfigDir()
 
-    // 1) Scrape and save tiers.json
     fmt.Println("Scraping tiers...")
     tiers, err := scrapeTier.ScrapeTierMap()
     if err != nil {
@@ -54,7 +53,6 @@ func main() {
     fmt.Printf("Saving %d tiers to %s\n", len(tierMap), tierFile)
     saveJSON(tierFile, tierMap)
 
-    // 2) Scrape element list
     fmt.Println("Scraping element list...")
     elements, err := scraping.ScrapeElementList()
     if err != nil {
@@ -62,7 +60,6 @@ func main() {
     }
     fmt.Printf("Found %d elements\n", len(elements))
 
-    // 3) Scrape all recipes
     fmt.Println("Scraping recipes...")
     recipes, err := scraping.ScrapeAllRecipes(elements)
     if err != nil {
