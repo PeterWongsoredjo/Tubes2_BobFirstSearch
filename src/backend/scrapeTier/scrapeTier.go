@@ -1,4 +1,4 @@
-package main
+package scrapeTier
 
 import (
     "encoding/json"
@@ -31,7 +31,6 @@ func getConfigDir() string {
 func ScrapeTierMap() ([]ElementTier, error) {
     const url = "https://little-alchemy.fandom.com/wiki/Elements_%28Little_Alchemy_2%29"
 
-    // --- FETCH ---
     req, _ := http.NewRequest("GET", url, nil)
     req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
     res, err := http.DefaultClient.Do(req)
@@ -43,7 +42,6 @@ func ScrapeTierMap() ([]ElementTier, error) {
         return nil, fmt.Errorf("unexpected status %d", res.StatusCode)
     }
 
-    // --- PARSE ---
     doc, err := goquery.NewDocumentFromReader(res.Body)
     if err != nil {
         return nil, fmt.Errorf("parse HTML: %w", err)
@@ -51,7 +49,6 @@ func ScrapeTierMap() ([]ElementTier, error) {
 
     var items []ElementTier
 
-    // 1) find all <h3> under the main content
     sel := doc.Find("div.mw-parser-output > h3")
 
     sel.Each(func(i int, h3 *goquery.Selection) {
@@ -85,7 +82,6 @@ func ScrapeTierMap() ([]ElementTier, error) {
         table := sib
         rows := table.Find("tr")
 
-        // 3) iterate rows, skip <th>
         rows.Each(func(j int, row *goquery.Selection) {
             if row.Find("th").Length() > 0 {
                 return

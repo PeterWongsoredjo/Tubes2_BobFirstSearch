@@ -1,72 +1,76 @@
 package main
 
 import (
-    "log"
-	"path/filepath"
-	"runtime"
     "encoding/json"
     "fmt"
+    "log"
     "os"
+    "path/filepath"
+    "runtime"
+
+    scrapeTier "github.com/BobKunanda/Tubes2_BobFirstSearch/src/backend/scrapeTier"
     "github.com/BobKunanda/Tubes2_BobFirstSearch/src/backend/scraping"
 )
 
-func getProjectRoot() string {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		log.Fatal("Could not get current file path")
-	}
+func getConfigDir() string {
+    _, filename, _, ok := runtime.Caller(0)
+    if !ok {
+        log.Fatal("Could not get current file path")
+    }
+    projectRoot := filepath.Dir(filepath.Dir(filepath.Dir(filename)))
+    return filepath.Join(projectRoot, "backend", "configs")
+}
 
-	projectRoot := filepath.Dir(filepath.Dir(filepath.Dir(filename)))
-	return filepath.Join(projectRoot, "backend", "configs")
+func saveJSON(path string, v interface{}) {
+    if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+        log.Fatalf("mkdir %s: %v", path, err)
+    }
+    f, err := os.Create(path)
+    if err != nil {
+        log.Fatalf("create %s: %v", path, err)
+    }
+    defer f.Close()
+    enc := json.NewEncoder(f)
+    enc.SetIndent("", "  ")
+    if err := enc.Encode(v); err != nil {
+        log.Fatalf("encode %s: %v", path, err)
+    }
 }
 
 func main() {
-    fmt.Println("Scraping element list...")
+    cfgDir := getConfigDir()
 
+    // 1) Scrape and save tiers.json
+    fmt.Println("Scraping tiers...")
+    tiers, err := scrapeTier.ScrapeTierMap()
+    if err != nil {
+        log.Fatalf("failed scraping tiers: %v", err)
+    }
+    tierMap := make(map[string]int, len(tiers))
+    for _, e := range tiers {
+        tierMap[e.Name] = e.Tier
+    }
+    tierFile := filepath.Join(cfgDir, "tiers.json")
+    fmt.Printf("Saving %d tiers to %s\n", len(tierMap), tierFile)
+    saveJSON(tierFile, tierMap)
+
+    // 2) Scrape element list
+    fmt.Println("Scraping element list...")
     elements, err := scraping.ScrapeElementList()
     if err != nil {
-        panic(fmt.Errorf("failed to scrape element list: %w", err))
+        log.Fatalf("failed scraping element list: %v", err)
     }
+    fmt.Printf("Found %d elements\n", len(elements))
 
-    fmt.Printf("Found %d elements.\n", len(elements))
-
-    fmt.Println("Scraping recipes for each element...")
-
+    // 3) Scrape all recipes
+    fmt.Println("Scraping recipes...")
     recipes, err := scraping.ScrapeAllRecipes(elements)
     if err != nil {
-        panic(fmt.Errorf("failed to scrape recipes: %w", err))
+        log.Fatalf("failed scraping recipes: %v", err)
     }
+    recipeFile := filepath.Join(cfgDir, "recipes.json")
+    fmt.Printf("Saving %d recipes to %s\n", len(recipes), recipeFile)
+    saveJSON(recipeFile, recipes)
 
-    fmt.Printf("Successfully scraped %d recipes!\n", len(recipes))
-
-    fmt.Println("Saving recipes to file...")
-
-	configsDir := getProjectRoot()
-	outputPath := filepath.Join(configsDir, "recipes.json")
-
-	err = saveRecipesToFile(outputPath, recipes)
-	if err != nil {
-		panic(fmt.Errorf("failed to save recipes to file: %w", err))
-	}
-
-    fmt.Println("Done! Recipes saved to recipes.json")
+    fmt.Println("✅ Done. Configs written to", cfgDir)
 }
-
-func saveRecipesToFile(filename string, recipes []scraping.Recipe) error {
-	if err := os.MkdirAll(filepath.Dir(filename), 0755); err != nil {
-		return err
-	}
-
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ")
-	return encoder.Encode(recipes)
-}
-
-// how to run this code:
-// go run cmd/mainScrape.go (tergantung dari mana run nya sama harus dalam 1 folder sm go.mod)
