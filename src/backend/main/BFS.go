@@ -2,43 +2,16 @@ package main
 
 import (
     "bufio"
-    "encoding/json"
     "flag"
     "fmt"
     "os"
     "strings"
 )
 
-var baseElements = map[string]bool{
-    "Water": true,
-    "Fire":  true,
-    "Air":   true,
-    "Earth": true,
-    "Time": true,
-}
-
-type Recipe struct {
-    Result     string   `json:"result"`
-    Components []string `json:"components"`
-}
-
 // Path is a sequence of element names from a base up to some element
 // Combined via recipes, recorded as pairs.
 type Path struct {
     Steps []Recipe
-}
-
-func loadRecipes(path string) ([]Recipe, error) {
-    f, err := os.Open(path)
-    if err != nil {
-        return nil, err
-    }
-    defer f.Close()
-    var recs []Recipe
-    if err := json.NewDecoder(f).Decode(&recs); err != nil {
-        return nil, err
-    }
-    return recs, nil
 }
 
 // index recipes by output element
@@ -138,7 +111,7 @@ func findAll(target string, idx map[string][][]string, max int) [][]Recipe {
     return results
 }
 
-func main() {
+func maina() {
     // flags
     mode := flag.String("mode", "shortest", "search mode: shortest or all")
     maxR := flag.Int("max", 5, "max recipes to find when mode=all")
