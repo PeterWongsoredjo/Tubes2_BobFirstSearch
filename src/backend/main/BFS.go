@@ -6,6 +6,7 @@ import (
     "os"
     "strings"
     "encoding/json"
+	"strconv"
 )
 
 type QueueItem struct {
@@ -47,12 +48,23 @@ func loadTiers(path string) (map[string]int, error) {
 
 func findShortest(target string, idx map[string][][]string, tiers map[string]int) ([]Recipe, bool) {
     queue := []QueueItem{{Elem: target, Chain: nil, Depth: 0}}
+	visited := make(map[string]int)
+	currentDepth := 0
+	var bestSolution[]Recipe
+	var foundSolution bool
 
     for len(queue) > 0 {
         levelSize := len(queue)
+		//fmt.Printf("Processing depth %d with %d items\n", currentDepth, levelSize)
         for i := 0; i < levelSize; i++ {
             item := queue[0]
             queue = queue[1:]
+
+			if prevDepth, seen := visited[item.Elem]; seen && prevDepth <= item.Depth {
+				continue
+			} 
+
+			visited[item.Elem] = item.Depth
 
             recipes := idx[item.Elem]
             for _, comps := range recipes {
@@ -62,27 +74,24 @@ func findShortest(target string, idx map[string][][]string, tiers map[string]int
                 if tiers[c1] > tTier || tiers[c2] > tTier {
                     continue
                 }
-                if baseElements[c1] && baseElements[c2] {
-                    chain := append([]Recipe{}, item.Chain...)
-                    chain = append(chain, Recipe{Result: item.Elem, Components: comps})
-                    return chain, true
-                }
+                
                 newChain := append([]Recipe{}, item.Chain...)
                 newChain = append(newChain, Recipe{Result: item.Elem, Components: comps})
 
-                if !baseElements[c1] {
-                    queue = append(queue, QueueItem{Elem: c1, Chain: newChain, Depth: item.Depth + 1})
-                } else {
-                    newChainC1 := append([]Recipe{}, newChain...)
-                    newChainC1 = append(newChainC1, Recipe{Result: c1, Components: []string{}})
-                    queue = append(queue, QueueItem{Elem: c2, Chain: newChainC1, Depth: item.Depth + 1})
-                }
+				if baseElements[c1] && baseElements[c2] {
+					bestSolution = newChain
+					foundSolution = true
+					continue
+				}
 
-                if !baseElements[c2] && !baseElements[c1] {
-                    queue = append(queue, QueueItem{Elem: c2, Chain: newChain, Depth: item.Depth + 1})
-                }
+				queue = append(queue, QueueItem{Elem: c1, Chain: newChain, Depth: item.Depth + 1})
+				queue = append(queue, QueueItem{Elem: c2, Chain: newChain, Depth: item.Depth + 1})
             }
         }
+		if foundSolution {
+			return bestSolution, true
+		}
+		currentDepth++
     }
     return nil, false
 }
@@ -117,56 +126,46 @@ func printFullChain(elem string, idx map[string][][]string, tiers map[string]int
 }
 
 func maina() {
-    // flags
-    //mode := flag.String("mode", "shortest", "search mode: shortest or all")
-    //maxR := flag.Int("max", 5, "max recipes to find when mode=all")
-    //flag.Parse()
-
-    recipes, err := loadRecipes("configs/recipes.json")
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "error loading recipes: %v\n", err)
-        os.Exit(1)
-    }
-    tiers, err := loadTiers("configs/tiers.json")
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "error loading tiers: %v\n", err)
-        os.Exit(1)
-    }
-    idx := buildIndex(recipes)
-
-    fmt.Print("Enter target element: ")
     reader := bufio.NewReader(os.Stdin)
-    input, _ := reader.ReadString('\n')
-    target := strings.TrimSpace(input)
 
-    printed := make(map[string]bool)
-    fmt.Println("Shortest recipe chain:")
-    printFullChain(target, idx, tiers, printed, "")
+	fmt.Print("Enter target element: ")
+	input, _ := reader.ReadString('\n')
+	target := strings.TrimSpace(input)
 
-    /*
-    if *mode == "shortest" {
-        chain, ok := findShortest(target, idx)
-        if !ok {
-            fmt.Printf("no path found to %q\n", target)
-            os.Exit(0)
-        }
-        fmt.Println("Shortest recipe chain:")
-        for _, r := range chain {
-            fmt.Printf("%s = %s + %s\n", r.Result, r.Components[0], r.Components[1])
-        }
-    } else {
-        chains := findAll(target, idx, *maxR)
-        if len(chains) == 0 {
-            fmt.Printf("no paths found to %q\n", target)
-            os.Exit(0)
-        }
-        fmt.Printf("Found %d recipe chains (max %d):\n", len(chains), *maxR)
-        for i, chain := range chains {
-            fmt.Printf("Chain #%d:\n", i+1)
-            for _, r := range chain {
-                fmt.Printf("  %s = %s + %s\n", r.Result, r.Components[0], r.Components[1])
-            }
-        }
-    }
-        */
+	recipes, err := loadRecipes("configs/recipes.json")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error loading recipes: %v\n", err)
+		os.Exit(1)
+	}
+
+	tiers, err := loadTiers("configs/tiers.json")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error loading tiers: %v\n", err)
+		os.Exit(1)
+	}
+
+	idx := buildIndex(recipes)
+
+	printed := make(map[string]bool)
+	fmt.Print("Do you want the shortest recipe chain or multiple distinct chains? (shortest/multiple): ")
+	choice, _ := reader.ReadString('\n')
+	choice = strings.TrimSpace(strings.ToLower(choice))
+
+	if choice == "shortest" {
+		fmt.Println("\nShortest recipe chain:")
+		printFullChain(target, idx, tiers, printed, "")
+	} else if choice == "multiple" {
+		fmt.Print("Enter the maximum number of distinct chains to find: ")
+		maxInput, _ := reader.ReadString('\n')
+		maxInput = strings.TrimSpace(maxInput)
+		max, err := strconv.Atoi(maxInput)
+		if err != nil || max <= 0 {
+			fmt.Println("Invalid number. Exiting.")
+			return
+		}
+
+	}else {
+		fmt.Println("Invalid choice. Exiting.")
+	}
+
 }
