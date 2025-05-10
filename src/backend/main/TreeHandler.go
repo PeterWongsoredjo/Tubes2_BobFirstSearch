@@ -29,6 +29,7 @@ func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFu
 }
 
 func main() {
+    // load your data
     recipes, err := loadRecipes("configs/recipes.json")
     if err != nil {
         log.Fatalf("loadRecipes: %v", err)
@@ -39,6 +40,7 @@ func main() {
     }
     idx := buildIndex(recipes)
 
+    // mount HTTP endpoint
     http.HandleFunc("/api/tree", treeHandler(idx, tiers))
     addr := ":8080"
     log.Printf("Listening on %s…\n", addr)

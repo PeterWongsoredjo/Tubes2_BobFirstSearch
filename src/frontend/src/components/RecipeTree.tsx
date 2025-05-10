@@ -80,13 +80,6 @@ export function RecipeTree({
       <Card className="w-full h-[500px] shadow-lg border-amber-800/50 flex flex-col bg-card/90 backdrop-blur-sm">
         <CardHeader className="flex items-center justify-between bg-amber-900/50 p-2 rounded-t-lg">
           <CardTitle className="text-amber-300">Recipe Visualization</CardTitle>
-          <div className="flex items-center space-x-2">
-            <Button onClick={handleZoomOut} variant="outline" size="icon">–</Button>
-            <span className="text-xs text-amber-300 w-12 text-center">
-              {Math.round(zoom * 100)}%
-            </span>
-            <Button onClick={handleZoomIn} variant="outline" size="icon">+</Button>
-          </div>
         </CardHeader>
         <div ref={containerRef} className="flex-1" />
       </Card>
