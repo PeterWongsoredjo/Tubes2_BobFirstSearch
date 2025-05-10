@@ -22,6 +22,21 @@ type Element struct {
 	Tier		int
 }
 
+type Node struct {
+    ID    int    `json:"id"`
+    Label string `json:"label"`
+}
+
+type Edge struct {
+    From int `json:"from"`
+    To   int `json:"to"`
+}
+
+type GraphResponse struct {
+    Nodes []Node `json:"nodes"`
+    Edges []Edge `json:"edges"`
+}
+
 func loadRecipes(path string) ([]Recipe, error) {
     f, err := os.Open(path)
     if err != nil {

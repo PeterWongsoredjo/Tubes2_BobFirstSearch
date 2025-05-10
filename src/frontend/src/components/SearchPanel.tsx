@@ -33,6 +33,7 @@ export function SearchPanel({ onSearch }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    console.log("🔍 SearchPanel.handleSubmit, element =", element, "alg=", alg, "mode=", mode, "maxRecipes=", maxRecipes)
     onSearch(element, alg, mode, parseInt(maxRecipes, 10))
   }
 
@@ -151,6 +152,7 @@ export function SearchPanel({ onSearch }: Props) {
 
               <Button
                 type="submit"
+                disabled={!element.trim()}
                 className="w-full bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-background font-medium shadow-[0_0_10px_rgba(217,119,6,0.3)]"
               >
                 Search Recipes

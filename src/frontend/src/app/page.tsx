@@ -1,18 +1,16 @@
-import { SearchPanel } from "@/components/SearchPanel"
-import { RecipeTree } from "@/components/RecipeTree"
-import { StatsPanel } from "@/components/StatsPanel"
+// src/app/page.tsx
+"use client"
 import { MainTitle } from "@/components/MainTitle"
+import { RecipeExplorer } from "@/components/RecipeExplorer"
+import { StatsPanel } from "@/components/StatsPanel"
 
 export default function Home() {
   return (
-    <main className="min-h-screen celestial-background pt-8">
-      <div className="container mx-auto px-4 py-4 max-w-6xl">
+    <main className="min-h-screen bg-black/80">
+      <div className="container mx-auto p-4 space-y-8">
         <MainTitle />
-        <div className="space-y-8 mt-6">
-          <SearchPanel />
-          <RecipeTree />
-          <StatsPanel />
-        </div>
+        <RecipeExplorer />
+        <StatsPanel />
       </div>
     </main>
   )

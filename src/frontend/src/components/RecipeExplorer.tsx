@@ -16,6 +16,7 @@ export function RecipeExplorer() {
     mode: "shortest"|"multiple",
     maxRecipes: number
   ) => {
+    console.log("↗️ RecipeExplorer.handleSearch got:", { element, algorithm, mode, max })
     setRoot(element)
     setAlg(algorithm)
     setMode(mode)

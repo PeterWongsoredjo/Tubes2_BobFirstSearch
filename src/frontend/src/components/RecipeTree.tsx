@@ -1,4 +1,3 @@
-// frontend/src/components/RecipeTree.tsx
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -9,88 +8,87 @@ import type { Network as NetworkType, Node, Edge } from "vis-network"
 import { DataSet } from "vis-data"
 
 export function RecipeTree({
-  root,
-  alg,        // "bfs" or "dfs"
-  mode,       // "shortest" or "multiple"
-  maxRecipes, // number
+    root,
+    alg,
+    mode,
+    maxRecipes,
 }: {
-  root: string
-  alg: "bfs"|"dfs"
-  mode: "shortest"|"multiple"
-  maxRecipes: number
-}) {
-  const [zoom, setZoom] = useState(1)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const networkRef = useRef<NetworkType | null>(null)
+    root: string
+    alg: "bfs"|"dfs"
+    mode: "shortest"|"multiple"
+    maxRecipes: number
+  }) {
+    const [zoom, setZoom] = useState(1)
+    const containerRef = useRef<HTMLDivElement>(null)
+    const networkRef = useRef<NetworkType | null>(null)
 
-  const handleZoomIn = () => setZoom(z => Math.min(z + 0.1, 2))
-  const handleZoomOut = () => setZoom(z => Math.max(z - 0.1, 0.5))
+    const handleZoomIn = () => setZoom(z => Math.min(z + 0.1, 2))
+    const handleZoomOut = () => setZoom(z => Math.max(z - 0.1, 0.5))
 
-  useEffect(() => {
-    if (!containerRef.current) return
+    useEffect(() => {
+      console.log("🌳 RecipeTree mounted with props:", { root, alg, mode, maxRecipes })
+      if (!root) return
+      if (!containerRef.current) return
 
-    // build the API URL with all query params
-    const url = new URL("http://localhost:8080/api/tree")
-    url.searchParams.set("root", root)
-    url.searchParams.set("alg", alg)
-    url.searchParams.set("mode", mode)
-    if (mode === "multiple") {
-      url.searchParams.set("max", String(maxRecipes))
-    }
+      const url = new URL("http://localhost:8080/api/tree")
+      url.searchParams.set("root", root)
+      url.searchParams.set("alg", alg)
+      url.searchParams.set("mode", mode)
+      if (mode === "multiple") {
+        url.searchParams.set("max", String(maxRecipes))
+      }
 
-    fetch(url.toString())
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.json()
-      })
-      .then(async (graph: { nodes: Node[]; edges: Edge[] }) => {
-        const nodes = new DataSet<Node>(graph.nodes)
-        const edges = new DataSet<Edge>(graph.edges)
+      fetch(url.toString())
+        .then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`)
+          return r.json()
+        })
+        .then(async (graph: { nodes: Node[]; edges: Edge[] }) => {
+          const nodes = new DataSet<Node>(graph.nodes)
+          const edges = new DataSet<Edge>(graph.edges)
 
-        const options = {
-          layout: { hierarchical: { direction: "UD", sortMethod: "directed" } },
-          interaction: { zoomView: true, dragView: true },
-          physics: false,
-        }
+          const options = {
+            layout: { hierarchical: { direction: "UD", sortMethod: "directed" } },
+            interaction: { zoomView: true, dragView: true },
+            physics: false,
+          }
 
-        // dynamic import so it only runs in browser
-        const { Network } = await import("vis-network")
+          const { Network } = await import("vis-network")
 
-        if (!networkRef.current) {
-          networkRef.current = new Network(
-            containerRef.current!,
-            { nodes, edges },
-            options
-          )
-        } else {
-          networkRef.current.setData({ nodes, edges })
-        }
+          if (!networkRef.current) {
+            networkRef.current = new Network(
+              containerRef.current!,
+              { nodes, edges },
+              options
+            )
+          } else {
+            networkRef.current.setData({ nodes, edges })
+          }
 
-        networkRef.current.moveTo({ scale: zoom })
-      })
-      .catch(err => {
-        console.error("Failed to load tree:", err)
-      })
-  }, [root, alg, mode, maxRecipes])
+          networkRef.current.moveTo({ scale: zoom })
+        })
+        .catch(err => {
+          console.error("Failed to load tree:", err)
+        })
+    }, [root, alg, mode, maxRecipes])
 
-  // re-apply zoom when it changes
-  useEffect(() => {
-    networkRef.current?.moveTo({ scale: zoom })
-  }, [zoom])
+    useEffect(() => {
+      networkRef.current?.moveTo({ scale: zoom })
+    }, [zoom])
 
-  return (
-    <Card className="w-full h-[500px] shadow-lg border-amber-800/50 flex flex-col bg-card/90 backdrop-blur-sm">
-      <CardHeader className="flex items-center justify-between bg-amber-900/50 p-2 rounded-t-lg">
-        <CardTitle className="text-amber-300">Recipe Visualization</CardTitle>
-        <div className="flex items-center space-x-2">
-          <Button onClick={handleZoomOut} variant="outline" size="icon">–</Button>
-          <span className="text-xs text-amber-300 w-12 text-center">
-            {Math.round(zoom * 100)}%
-          </span>
-          <Button onClick={handleZoomIn} variant="outline" size="icon">+</Button>
-        </div>
-      </CardHeader>
-      <div ref={containerRef} className="flex-1" />
-    </Card>
-  )
-}
+    return (
+      <Card className="w-full h-[500px] shadow-lg border-amber-800/50 flex flex-col bg-card/90 backdrop-blur-sm">
+        <CardHeader className="flex items-center justify-between bg-amber-900/50 p-2 rounded-t-lg">
+          <CardTitle className="text-amber-300">Recipe Visualization</CardTitle>
+          <div className="flex items-center space-x-2">
+            <Button onClick={handleZoomOut} variant="outline" size="icon">–</Button>
+            <span className="text-xs text-amber-300 w-12 text-center">
+              {Math.round(zoom * 100)}%
+            </span>
+            <Button onClick={handleZoomIn} variant="outline" size="icon">+</Button>
+          </div>
+        </CardHeader>
+        <div ref={containerRef} className="flex-1" />
+      </Card>
+    )
+  }
