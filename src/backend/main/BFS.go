@@ -180,42 +180,53 @@ func collectEdgesFromChain(chain []Recipe) [][2]string {
 	return pairs
 }
 
-func buildTrueTree(pairs [][2]string, idx int) GraphResponse {
+func buildTrueTree(root string, pairs [][2]string) GraphResponse {
 	idOf := map[string]int{}
 	parentOf := map[string]int{}
 	var nodes []Node
 	var edges []Edge
-	nextID := idx * 1000
+	nextID := 1
 
-	baseElementInstances := make(map[string][]int)
+	elementInstances := make(map[string][]int)
+
+	elementUseCount := make(map[string]int)
+
+	idOf[root] = nextID
+	nextID++
 
 	for _, p := range pairs {
 		parentLabel := p[0]
 		childLabel := p[1]
 
-		if _, ok := idOf[parentLabel]; !ok {
-			idOf[parentLabel] = nextID
-			nextID++
+		parentID := idOf[parentLabel]
+		if parentLabel != root {
+			if elementUseCount[parentLabel] > 0 && len(elementInstances[parentLabel]) > 0 {
+				instances := elementInstances[parentLabel]
+				parentID = instances[len(instances)-1]
+			}
 		}
 
-		parentID := idOf[parentLabel]
-
-		if baseElements[childLabel] {
+		elementUseCount[childLabel]++
+		if baseElements[childLabel] || (elementUseCount[childLabel] > 1 && childLabel != root) {
 			childID := nextID
 			nextID++
 
-			baseElementInstances[childLabel] = append(baseElementInstances[childLabel], childID)
+			elementInstances[childLabel] = append(elementInstances[childLabel], childID)
+
 			edges = append(edges, Edge{
 				From: parentID,
 				To:   childID,
 			})
 
-			parentOf[fmt.Sprintf("%s_%d", childLabel, childID)] = parentID
+			instanceKey := fmt.Sprintf("%s_%d", childLabel, childID)
+			parentOf[instanceKey] = parentID
 		} else {
 			if _, ok := idOf[childLabel]; !ok {
 				idOf[childLabel] = nextID
 				nextID++
 				parentOf[childLabel] = parentID
+
+				elementInstances[childLabel] = append(elementInstances[childLabel], idOf[childLabel])
 			}
 
 			edges = append(edges, Edge{
@@ -224,6 +235,7 @@ func buildTrueTree(pairs [][2]string, idx int) GraphResponse {
 			})
 		}
 	}
+
 	for label, id := range idOf {
 		node := Node{ID: id, Label: label}
 		if pid, ok := parentOf[label]; ok {
@@ -231,16 +243,23 @@ func buildTrueTree(pairs [][2]string, idx int) GraphResponse {
 		}
 		nodes = append(nodes, node)
 	}
-	for baseLabel, instances := range baseElementInstances {
-		for _, id := range instances {
+
+	for elemLabel, instances := range elementInstances {
+		for i, id := range instances {
+			if i == 0 && idOf[elemLabel] == id {
+				continue
+			}
+
+			instanceKey := fmt.Sprintf("%s_%d", elemLabel, id)
 			node := Node{
 				ID:     id,
-				Label:  baseLabel,
-				Parent: parentOf[fmt.Sprintf("%s_%d", baseLabel, id)],
+				Label:  elemLabel,
+				Parent: parentOf[instanceKey],
 			}
 			nodes = append(nodes, node)
 		}
 	}
+
 	return GraphResponse{Nodes: nodes, Edges: edges}
 }
 

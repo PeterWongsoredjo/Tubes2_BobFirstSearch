@@ -99,21 +99,20 @@ export function SearchPanel({ onSearch }: Props) {
                   </div>
                   <RadioGroup
                     defaultValue={mode}
-                    onValueChange={val => setMode(val as any)}
-                    className="flex space-x-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="shortest" id="shortest" />
-                      <Label htmlFor="shortest" className="cursor-pointer text-amber-200">
-                        Shortest
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="multiple" id="multiple" />
-                      <Label htmlFor="multiple" className="cursor-pointer text-amber-200">
-                        Multiple
-                      </Label>
-                    </div>
+                    onValueChange={(val) => setMode(val as any)}
+                    className="flex space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="shortest" id="shortest" />
+                        <Label htmlFor="shortest" className="cursor-pointer text-amber-200">
+                          Shortest
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="multiple" id="multiple" />
+                        <Label htmlFor="multiple" className="cursor-pointer text-amber-200">
+                          Multiple
+                        </Label>
+                      </div>
                   </RadioGroup>
                 </div>
               </div>
@@ -123,17 +122,22 @@ export function SearchPanel({ onSearch }: Props) {
               {mode === "multiple" && (
                 <div className="flex items-center justify-between pl-4 pr-6 py-3 bg-secondary/30 rounded-lg border border-amber-800/30">
                   <Label htmlFor="maxRecipes" className="text-amber-200">
-                    Max recipes
+                    Max Recipes
                   </Label>
                   <Select
                     value={maxRecipes}
-                    onValueChange={val => setMaxRecipes(val)}
+                    onValueChange={(val) => setMaxRecipes(val)}
                   >
-                    {Array.from({ length: 10 }, (_, i) => (
-                      <SelectItem key={i+1} value={`${i+1}`}>
-                        {i+1}
-                      </SelectItem>
-                    ))}
+                    <SelectTrigger className="border-amber-800/50 bg-secondary/50 w-[120px]">
+                      <SelectValue placeholder="Select max" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-amber-800/50">
+                      {Array.from({ length: 10 }, (_, i) => (
+                        <SelectItem key={i + 1} value={`${i + 1}`}>
+                          {i + 1}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </div>
               )}
