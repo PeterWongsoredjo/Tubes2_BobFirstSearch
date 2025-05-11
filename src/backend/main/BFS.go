@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	//"fmt"
-	"log"
-	"os"
+	//"log"
+	//"os"
 	"fmt"
 	"strings"
 	"sort"
@@ -20,26 +20,6 @@ type QueueItem struct {
 	Chain   *ChainNode
 	Depth   int
 	Visited map[string]bool
-}
-
-
-
-// buildIndex groups recipes by Result, deduping identical component pairs
-func buildIndex(recipes []Recipe) map[string][][]string {
-    idx := make(map[string][][]string)
-    seen := map[string]map[string]bool{}
-    for _, r := range recipes {
-        key := strings.Join(r.Components, "|")
-        if seen[r.Result] == nil {
-            seen[r.Result] = make(map[string]bool)
-        }
-        if seen[r.Result][key] {
-            continue
-        }
-        seen[r.Result][key] = true
-        idx[r.Result] = append(idx[r.Result], r.Components)
-    }
-    return idx
 }
 
 func copyMap(original map[string]bool) map[string]bool {
@@ -94,7 +74,6 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 
 	for depth := 0; len(queue) > 0 && depth < 30; depth++ {
 		nextQueue := []QueueItem{}
-		//fmt.Printf("Depth %d: %d items\n", depth, len(queue))
 
 		for len(queue) > 0 {
 			item := queue[0]
@@ -201,41 +180,50 @@ func collectEdgesFromChain(chain []Recipe) [][2]string {
 	return pairs
 }
 
-
-
-
-func buildTrueTree(root string, pairs [][2]string) GraphResponse {
-	idOf := map[string]int{}          // label → ID
-	parentOf := map[string]int{}      // label → parent ID
+func buildTrueTree(pairs [][2]string, idx int) GraphResponse {
+	idOf := map[string]int{}
+	parentOf := map[string]int{}
 	var nodes []Node
 	var edges []Edge
-	nextID := 1
+	nextID := idx * 1000
+
+	baseElementInstances := make(map[string][]int)
 
 	for _, p := range pairs {
 		parentLabel := p[0]
 		childLabel := p[1]
 
-		// Assign ID to parent if not already assigned
 		if _, ok := idOf[parentLabel]; !ok {
 			idOf[parentLabel] = nextID
 			nextID++
 		}
 
-		// Assign ID to child if not already assigned
-		if _, ok := idOf[childLabel]; !ok {
-			idOf[childLabel] = nextID
+		parentID := idOf[parentLabel]
+
+		if baseElements[childLabel] {
+			childID := nextID
 			nextID++
-			parentOf[childLabel] = idOf[parentLabel]
+
+			baseElementInstances[childLabel] = append(baseElementInstances[childLabel], childID)
+			edges = append(edges, Edge{
+				From: parentID,
+				To:   childID,
+			})
+
+			parentOf[fmt.Sprintf("%s_%d", childLabel, childID)] = parentID
+		} else {
+			if _, ok := idOf[childLabel]; !ok {
+				idOf[childLabel] = nextID
+				nextID++
+				parentOf[childLabel] = parentID
+			}
+
+			edges = append(edges, Edge{
+				From: parentID,
+				To:   idOf[childLabel],
+			})
 		}
-
-		// Record edge
-		edges = append(edges, Edge{
-			From: idOf[parentLabel],
-			To:   idOf[childLabel],
-		})
 	}
-
-	// Add all nodes with parent info if available
 	for label, id := range idOf {
 		node := Node{ID: id, Label: label}
 		if pid, ok := parentOf[label]; ok {
@@ -243,14 +231,20 @@ func buildTrueTree(root string, pairs [][2]string) GraphResponse {
 		}
 		nodes = append(nodes, node)
 	}
-
+	for baseLabel, instances := range baseElementInstances {
+		for _, id := range instances {
+			node := Node{
+				ID:     id,
+				Label:  baseLabel,
+				Parent: parentOf[fmt.Sprintf("%s_%d", baseLabel, id)],
+			}
+			nodes = append(nodes, node)
+		}
+	}
 	return GraphResponse{Nodes: nodes, Edges: edges}
 }
 
-
-
-
-func main() {
+/*func main() {
     if len(os.Args) < 2 {
         fmt.Fprintf(os.Stderr, "Usage: %s <RootElement>\n", os.Args[0])
         os.Exit(1)
@@ -289,4 +283,4 @@ func main() {
     fmt.Println("\nTree JSON:")
     fmt.Println(string(b))
 
-}
+}*/

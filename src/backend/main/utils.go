@@ -1,8 +1,9 @@
 package main
 
 import (
-    "encoding/json"
-    "os"
+	"encoding/json"
+	"os"
+	"strings"
 )
 
 var baseElements = map[string]bool{
@@ -33,6 +34,7 @@ type TreeNode struct {
 type Node struct {
     ID    int    `json:"id"`
     Label string `json:"label"`
+    Parent int   `json:"parent,omitempty"`
 }
 
 type Edge struct {
@@ -69,4 +71,21 @@ func loadTiers(path string) (map[string]int, error) {
         return nil, err
     }
     return tiers, nil
+}
+
+func buildIndex(recipes []Recipe) map[string][][]string {
+    idx := make(map[string][][]string)
+    seen := map[string]map[string]bool{}
+    for _, r := range recipes {
+        key := strings.Join(r.Components, "|")
+        if seen[r.Result] == nil {
+            seen[r.Result] = make(map[string]bool)
+        }
+        if seen[r.Result][key] {
+            continue
+        }
+        seen[r.Result][key] = true
+        idx[r.Result] = append(idx[r.Result], r.Components)
+    }
+    return idx
 }

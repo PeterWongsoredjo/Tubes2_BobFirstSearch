@@ -4,6 +4,7 @@ import (
     "encoding/json"
     "log"
     "net/http"
+    "strconv"
 )
 
 func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFunc {
@@ -13,23 +14,49 @@ func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFu
             http.Error(w, "missing ?root=...", 400)
             return
         }
-
-        // collect BFS-shortest edges
-        var pairs [][2]string
-        collectEdges(root, idx, tiers, map[string]bool{}, &pairs)
-        log.Printf("Collected %d edges for %q\n", len(pairs), root)
-
-        graph := buildTrueTree(root, pairs)
-        w.Header().Set("Content-Type", "application/json")
-        w.Header().Set("Access-Control-Allow-Origin", "*")
-        if err := json.NewEncoder(w).Encode(graph); err != nil {
-            log.Printf("Encode error: %v\n", err)
+        mode := r.URL.Query().Get("mode")
+        if mode == "" {
+            http.Error(w, "missing ?mode=...", 400)
+            return
         }
+        alg := r.URL.Query().Get("alg")
+        maxRecipes := r.URL.Query().Get("maxRecipes")
+        if maxRecipes == "" {
+            maxRecipes = "1"
+        }
+        numRecipes, err := strconv.Atoi(maxRecipes)
+        if err != nil {
+            http.Error(w, "Invalid maxRecipes parameter", http.StatusBadRequest)
+            return
+        }
+
+		var graph GraphResponse
+		switch alg {
+		case "bfs":
+			chains := bfs(root, idx, tiers, numRecipes)
+			for i, chain := range chains {
+				// Append a new ID for each BFS tree
+				pairs := collectEdgesFromChain(chain)
+				tree := buildTrueTree(pairs, i)
+				graph.Nodes = append(graph.Nodes, tree.Nodes...)
+				graph.Edges = append(graph.Edges, tree.Edges...)
+			}
+		case "dfs":
+			if mode == "shortest" {
+				// Call findShortest function here
+			} else {
+				// Call findAll function here
+			}
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		if err := json.NewEncoder(w).Encode(graph); err != nil {
+			log.Printf("Encode error: %v\n", err)
+		}
     }
 }
 
 func main() {
-    // load your data
     recipes, err := loadRecipes("configs/recipes.json")
     if err != nil {
         log.Fatalf("loadRecipes: %v", err)
@@ -40,7 +67,6 @@ func main() {
     }
     idx := buildIndex(recipes)
 
-    // mount HTTP endpoint
     http.HandleFunc("/api/tree", treeHandler(idx, tiers))
     addr := ":8080"
     log.Printf("Listening on %s…\n", addr)
