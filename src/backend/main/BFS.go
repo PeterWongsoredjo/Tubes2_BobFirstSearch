@@ -3,11 +3,11 @@ package main
 import (
 	//"encoding/json"
 	//"fmt"
+	"fmt"
 	//"log"
 	//"os"
-	"fmt"
-	"strings"
 	"sort"
+	"strings"
 )
 
 type ChainNode struct {
@@ -149,7 +149,6 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 }
 
 func isFullyResolved(chain []Recipe, _ map[string]bool) bool {
-	fmt.Println(chain)
 	resolved := make(map[string]bool)
 	for _, r := range chain {
 		resolved[r.Result] = true
@@ -178,6 +177,16 @@ func collectEdgesFromChain(chain []Recipe) [][2]string {
 		}
 	}
 	return pairs
+}
+
+func buildMultipleTrees(root string, chains [][]Recipe) []GraphResponse {
+	var trees []GraphResponse
+	for idx, chain := range chains {
+		pairs := collectEdgesFromChain(chain)
+		tree := buildTrueTree(root, pairs, idx)
+		trees = append(trees, tree)
+	}
+	return trees
 }
 
 func buildTrueTree(root string, pairs [][2]string, idx int) GraphResponse {
@@ -263,43 +272,52 @@ func buildTrueTree(root string, pairs [][2]string, idx int) GraphResponse {
 	return GraphResponse{Nodes: nodes, Edges: edges}
 }
 
-/*func main() {
-    if len(os.Args) < 2 {
-        fmt.Fprintf(os.Stderr, "Usage: %s <RootElement>\n", os.Args[0])
-        os.Exit(1)
-    }
-    root := os.Args[1]
+/*
+func mainaf() {
+	if len(os.Args) < 2 {
+		fmt.Fprintf(os.Stderr, "Usage: %s <RootElement>\n", os.Args[0])
+		os.Exit(1)
+	}
+	root := os.Args[1]
 
-    // load data
-    recipes, err := loadRecipes("configs/recipes.json")
-    if err != nil {
-        log.Fatalf("loadRecipes: %v", err)
-    }
-    tiers, err := loadTiers("configs/tiers.json")
-    if err != nil {
-        log.Fatalf("loadTiers: %v", err)
-    }
-    idx := buildIndex(recipes)
+	// load data
+	recipes, err := loadRecipes("configs/recipes.json")
+	if err != nil {
+		log.Fatalf("loadRecipes: %v", err)
+	}
+	tiers, err := loadTiers("configs/tiers.json")
+	if err != nil {
+		log.Fatalf("loadTiers: %v", err)
+	}
+	idx := buildIndex(recipes)
 
-    // find & print the BFS-shortest chain
-    // find & print the BFS-shortest chain
-        chains := bfs(root, idx, tiers, 1)
-    if len(chains) == 0 {
-        fmt.Printf("No BFS-shortest chain found for %q\n", root)
-        return
-    }
+	// Set a limit for how many solutions to find (e.g., 5)
+	limit := 5
+	chains := bfs(root, idx, tiers, limit)
+	if len(chains) == 0 {
+		fmt.Printf("No chains found for %q\n", root)
+		return
+	}
 
-    chain := chains[0]
-    fmt.Printf("BFS-shortest chain for %q:\n", root)
-    for _, step := range chain {
-        fmt.Printf("  %s = %s + %s\n", step.Result, step.Components[0], step.Components[1])
-    }
+	fmt.Printf("Found %d chains for %q:\n", len(chains), root)
 
-    // build and print the full tree JSON from one BFS chain
-    pairs := collectEdgesFromChain(chain)
-    tree := buildTrueTree(root, pairs)
-    b, _ := json.MarshalIndent(tree, "", "  ")
-    fmt.Println("\nTree JSON:")
-    fmt.Println(string(b))
+	// Print all chains
+	for i, chain := range chains {
+		fmt.Printf("\nChain %d:\n", i+1)
+		for _, step := range chain {
+			fmt.Printf("  %s = %s + %s\n", step.Result, step.Components[0], step.Components[1])
+		}
+	}
 
-}*/
+	// Build multiple trees
+	trees := buildMultipleTrees(root, chains)
+
+	// Print all trees as JSON
+	fmt.Println("\nTrees JSON:")
+	for i, tree := range trees {
+		fmt.Printf("\nTree %d:\n", i+1)
+		b, _ := json.MarshalIndent(tree, "", "  ")
+		fmt.Println(string(b))
+	}
+}
+*/
