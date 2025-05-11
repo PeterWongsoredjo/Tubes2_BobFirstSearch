@@ -35,9 +35,8 @@ func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFu
 		case "bfs":
 			chains := bfs(root, idx, tiers, numRecipes)
 			for i, chain := range chains {
-				// Append a new ID for each BFS tree
 				pairs := collectEdgesFromChain(chain)
-				tree := buildTrueTree(pairs, i)
+				tree := buildTrueTree(root, pairs, i)
 				graph.Nodes = append(graph.Nodes, tree.Nodes...)
 				graph.Edges = append(graph.Edges, tree.Edges...)
 			}
@@ -66,7 +65,6 @@ func main() {
         log.Fatalf("loadTiers: %v", err)
     }
     idx := buildIndex(recipes)
-
     http.HandleFunc("/api/tree", treeHandler(idx, tiers))
     addr := ":8080"
     log.Printf("Listening on %s…\n", addr)

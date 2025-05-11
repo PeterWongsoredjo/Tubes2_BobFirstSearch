@@ -122,7 +122,7 @@ export function SearchPanel({ onSearch }: Props) {
               {mode === "multiple" && (
                 <div className="flex items-center justify-between pl-4 pr-6 py-3 bg-secondary/30 rounded-lg border border-amber-800/30">
                   <Label htmlFor="maxRecipes" className="text-amber-200">
-                    Max Recipes
+                    # of Recipes
                   </Label>
                   <Select
                     value={maxRecipes}

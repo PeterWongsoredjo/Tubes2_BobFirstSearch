@@ -180,12 +180,12 @@ func collectEdgesFromChain(chain []Recipe) [][2]string {
 	return pairs
 }
 
-func buildTrueTree(root string, pairs [][2]string) GraphResponse {
+func buildTrueTree(root string, pairs [][2]string, idx int) GraphResponse {
 	idOf := map[string]int{}
 	parentOf := map[string]int{}
 	var nodes []Node
 	var edges []Edge
-	nextID := 1
+	nextID := (1000 * idx) + 1
 
 	elementInstances := make(map[string][]int)
 
