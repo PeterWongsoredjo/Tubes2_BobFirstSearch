@@ -6,8 +6,6 @@ import (
 	"fmt"
 	//"log"
 	//"os"
-	"sort"
-	"strings"
 )
 
 type ChainNode struct {
@@ -15,33 +13,11 @@ type ChainNode struct {
 	Parent *ChainNode
 }
 
-type QueueItem struct {
+type QueueItemO struct {
 	Elems   []string
 	Chain   *ChainNode
 	Depth   int
 	Visited map[string]bool
-}
-
-func copyMap(original map[string]bool) map[string]bool {
-	newMap := make(map[string]bool)
-	for k, v := range original {
-		newMap[k] = v
-	}
-	return newMap
-}
-
-func deduplicateChain(chain []Recipe) []Recipe {
-	seen := make(map[string]bool)
-	deduped := []Recipe{}
-
-	for _, r := range chain {
-		if seen[r.Result] {
-			continue
-		}
-		seen[r.Result] = true
-		deduped = append(deduped, r)
-	}
-	return deduped
 }
 
 func buildChainList(node *ChainNode) []Recipe {
@@ -53,17 +29,8 @@ func buildChainList(node *ChainNode) []Recipe {
 	return chain
 }
 
-func chainKey(chain []Recipe) string {
-	var parts []string
-	for _, r := range chain {
-		parts = append(parts, fmt.Sprintf("%s=%s+%s", r.Result, r.Components[0], r.Components[1]))
-	}
-	sort.Strings(parts)
-	return strings.Join(parts, ";")
-}
-
 func bfs(target string, idx map[string][][]string, tiers map[string]int, limit int) ([]([]Recipe), int) {
-	queue := []QueueItem{{
+	queue := []QueueItemO{{
 		Elems:   []string{target},
 		Chain:   nil,
 		Depth:   0,
@@ -74,7 +41,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 	nodesVisited := 0
 
 	for depth := 0; len(queue) > 0 && depth < 30; depth++ {
-		nextQueue := []QueueItem{}
+		nextQueue := []QueueItemO{}
 
 		for len(queue) > 0 {
 			item := queue[0]
@@ -100,7 +67,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 			rest := item.Elems[1:]
 
 			if baseElements[elem] || item.Visited[elem] {
-				queue = append(queue, QueueItem{
+				queue = append(queue, QueueItemO{
 					Elems:   rest,
 					Chain:   item.Chain,
 					Depth:   item.Depth,
@@ -136,7 +103,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 				newVisited := copyMap(item.Visited)
 				newVisited[elem] = true
 
-				nextQueue = append(nextQueue, QueueItem{
+				nextQueue = append(nextQueue, QueueItemO{
 					Elems:   newElems,
 					Chain:   node,
 					Depth:   depth + 1,
@@ -148,37 +115,6 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 		queue = nextQueue
 	}
 	return solutions, nodesVisited
-}
-
-func isFullyResolved(chain []Recipe, _ map[string]bool) bool {
-	resolved := make(map[string]bool)
-	for _, r := range chain {
-		resolved[r.Result] = true
-	}
-
-	for _, r := range chain {
-		for _, comp := range r.Components {
-			if baseElements[comp] {
-				continue
-			}
-			if resolved[comp] {
-				continue
-			}
-			return false
-		}
-	}
-	return true
-}
-
-func collectEdgesFromChain(chain []Recipe) [][2]string {
-	var pairs [][2]string
-	for _, step := range chain {
-		parent := step.Result
-		for _, child := range step.Components {
-			pairs = append(pairs, [2]string{parent, child})
-		}
-	}
-	return pairs
 }
 
 func buildMultipleTrees(root string, chains [][]Recipe) []GraphResponse {

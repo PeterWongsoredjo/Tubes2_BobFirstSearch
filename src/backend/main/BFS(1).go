@@ -1,9 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"sort"
-	"strings"
 	"time"
 )
 
@@ -32,7 +29,7 @@ type QueueItem struct {
 	Depth int
 }
 
-func bfs(target string, idx map[string][][]string, tiers map[string]int, limit int) ([]([]Recipe), int) {
+func newbfs(target string, idx map[string][][]string, tiers map[string]int, limit int) ([]([]Recipe), int) {
 	startTime := time.Now()
 	maxExecutionTime := 60 * time.Second
 
@@ -287,50 +284,6 @@ func collectRecipes(node *ElementNode, chain *[]Recipe) {
 	*chain = append(*chain, node.Recipe)
 }
 
-// Helper functions remain the same
-func deduplicateChain(chain []Recipe) []Recipe {
-	seen := make(map[string]bool)
-	deduped := []Recipe{}
-
-	for _, r := range chain {
-		if seen[r.Result] {
-			continue
-		}
-		seen[r.Result] = true
-		deduped = append(deduped, r)
-	}
-	return deduped
-}
-
-func chainKey(chain []Recipe) string {
-	var parts []string
-	for _, r := range chain {
-		parts = append(parts, fmt.Sprintf("%s=%s+%s", r.Result, r.Components[0], r.Components[1]))
-	}
-	sort.Strings(parts)
-	return strings.Join(parts, ";")
-}
-
-func isFullyResolved(chain []Recipe, _ map[string]bool) bool {
-	resolved := make(map[string]bool)
-	for _, r := range chain {
-		resolved[r.Result] = true
-	}
-
-	for _, r := range chain {
-		for _, comp := range r.Components {
-			if baseElements[comp] {
-				continue
-			}
-			if resolved[comp] {
-				continue
-			}
-			return false
-		}
-	}
-	return true
-}
-
 func resolveStatus(el string) ElementStatus {
 	if baseElements[el] {
 		return Resolved
@@ -340,7 +293,7 @@ func resolveStatus(el string) ElementStatus {
 
 // buildTrueTree builds a visualization tree directly from a recipe chain
 // buildMultipleTrees constructs visualization trees from recipe chains
-func buildMultipleTrees(root string, chains [][]Recipe) []GraphResponse {
+func newbuildMultipleTrees(root string, chains [][]Recipe) []GraphResponse {
     var trees []GraphResponse
     
     for i, chain := range chains {

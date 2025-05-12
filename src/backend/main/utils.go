@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"strings"
+    "sort"
+    "fmt"
 )
 
 var baseElements = map[string]bool{
@@ -108,4 +110,47 @@ func collectEdgesFromChain(chain []Recipe) [][2]string {
 		}
 	}
 	return pairs
+}
+
+func isFullyResolved(chain []Recipe, _ map[string]bool) bool {
+	resolved := make(map[string]bool)
+	for _, r := range chain {
+		resolved[r.Result] = true
+	}
+
+	for _, r := range chain {
+		for _, comp := range r.Components {
+			if baseElements[comp] {
+				continue
+			}
+			if resolved[comp] {
+				continue
+			}
+			return false
+		}
+	}
+	return true
+}
+
+func deduplicateChain(chain []Recipe) []Recipe {
+	seen := make(map[string]bool)
+	deduped := []Recipe{}
+
+	for _, r := range chain {
+		if seen[r.Result] {
+			continue
+		}
+		seen[r.Result] = true
+		deduped = append(deduped, r)
+	}
+	return deduped
+}
+
+func chainKey(chain []Recipe) string {
+	var parts []string
+	for _, r := range chain {
+		parts = append(parts, fmt.Sprintf("%s=%s+%s", r.Result, r.Components[0], r.Components[1]))
+	}
+	sort.Strings(parts)
+	return strings.Join(parts, ";")
 }
