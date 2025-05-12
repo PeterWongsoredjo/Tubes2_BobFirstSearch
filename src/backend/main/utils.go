@@ -89,3 +89,23 @@ func buildIndex(recipes []Recipe) map[string][][]string {
     }
     return idx
 }
+
+func copyMap(original map[string]bool) map[string]bool {
+	newMap := make(map[string]bool)
+	for k, v := range original {
+		newMap[k] = v
+	}
+	return newMap
+}
+
+// collectEdgesFromChain extracts parent-child relationships from a recipe chain
+func collectEdgesFromChain(chain []Recipe) [][2]string {
+	var pairs [][2]string
+	for _, step := range chain {
+		parent := step.Result
+		for _, child := range step.Components {
+			pairs = append(pairs, [2]string{parent, child})
+		}
+	}
+	return pairs
+}
