@@ -1,3 +1,4 @@
+// backend/scraper.go
 package main
 
 import (
@@ -37,13 +38,13 @@ func saveJSON(path string, v interface{}) {
     }
 }
 
-func main() {
+func runScraping() error {
     cfgDir := getConfigDir()
 
     fmt.Println("Scraping tiers...")
     tiers, err := scrapeTier.ScrapeTierMap()
     if err != nil {
-        log.Fatalf("failed scraping tiers: %v", err)
+        return fmt.Errorf("failed scraping tiers: %v", err)
     }
     tierMap := make(map[string]int, len(tiers))
     for _, e := range tiers {
@@ -56,18 +57,19 @@ func main() {
     fmt.Println("Scraping element list...")
     elements, err := scraping.ScrapeElementList()
     if err != nil {
-        log.Fatalf("failed scraping element list: %v", err)
+        return fmt.Errorf("failed scraping element list: %v", err)
     }
     fmt.Printf("Found %d elements\n", len(elements))
 
     fmt.Println("Scraping recipes...")
     recipes, err := scraping.ScrapeAllRecipes(elements)
     if err != nil {
-        log.Fatalf("failed scraping recipes: %v", err)
+        return fmt.Errorf("failed scraping recipes: %v", err)
     }
     recipeFile := filepath.Join(cfgDir, "recipes.json")
     fmt.Printf("Saving %d recipes to %s\n", len(recipes), recipeFile)
     saveJSON(recipeFile, recipes)
 
-    fmt.Println("✅ Done. Configs written to", cfgDir)
+    fmt.Println("Done. Configs written to", cfgDir)
+    return nil
 }
