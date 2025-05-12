@@ -161,10 +161,6 @@ export function RecipeTree({
       <Card className="w-full shadow-lg border-amber-800/50 flex flex-col bg-card/90 backdrop-blur-sm">
         <CardHeader className="bg-gradient-to-r from-amber-950/80 to-amber-900/50 p-2 rounded-t-lg border-b border-amber-700/30">
           <CardTitle className="text-amber-300 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-            </svg>
             Recipe Visualization
           </CardTitle>
         </CardHeader>

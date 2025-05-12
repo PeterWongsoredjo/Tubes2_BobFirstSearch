@@ -31,10 +31,7 @@ export function StatsPanel({ stats, alg, mode }: StatsPanelProps) {
     <Card className="w-full shadow-lg border-amber-800/50 bg-card/90 backdrop-blur-sm">
       <CardHeader className="bg-gradient-to-r from-amber-950/80 to-amber-900/50 p-3 rounded-t-lg border-b border-amber-700/30">
         <CardTitle className="text-amber-300 flex items-center text-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-            <path d="M12 20v-6M6 20V10M18 20V4"></path>
-          </svg>
-          Algorithm Performance Stats
+          Search Statistics
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
