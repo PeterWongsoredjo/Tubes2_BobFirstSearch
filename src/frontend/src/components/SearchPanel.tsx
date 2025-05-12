@@ -158,6 +158,7 @@ export function SearchPanel({ onSearch }: Props) {
                 type="submit"
                 disabled={!element.trim()}
                 className="w-full bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-background font-medium shadow-[0_0_10px_rgba(217,119,6,0.3)]"
+                onClick={() => new Audio('sounds/Jesse, We Have To Cook - Sound Effect (Breaking Bad) (mp3cut.net).mp3').play()}
               >
                 Search Recipes
               </Button>
