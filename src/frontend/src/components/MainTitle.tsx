@@ -1,7 +1,6 @@
 export function MainTitle() {
   return (
     <div className="text-center mb-8 relative">
-
       <h1 className="font-cinzel text-5xl md:text-6xl lg:text-7xl text-amber-300  tracking-wide relative inline-block">
         <span className="text-6xl md:text-7xl lg:text-8xl">B</span>ob
         <span className="text-6xl md:text-7xl lg:text-8xl">F</span>irst
