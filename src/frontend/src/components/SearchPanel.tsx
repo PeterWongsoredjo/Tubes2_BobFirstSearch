@@ -79,7 +79,7 @@ export function SearchPanel({ onSearch }: Props) {
               <Label htmlFor="algorithm" className="text-amber-200">
                 Search algorithm
               </Label>
-              <Select value={alg} onValueChange={val => setAlg(val as any)}>
+              <Select value={alg} onValueChange={(val: "bfs" | "dfs") => setAlg(val)}>
                 <SelectTrigger id="algorithm" className="border-amber-800/50 bg-secondary/50">
                   <SelectValue placeholder="Select algorithm" />
                 </SelectTrigger>
@@ -99,7 +99,7 @@ export function SearchPanel({ onSearch }: Props) {
                   </div>
                   <RadioGroup
                     defaultValue={mode}
-                    onValueChange={(val) => setMode(val as any)}
+                    onValueChange={(val: "shortest" | "multiple") => setMode(val)}
                     className="flex space-x-4">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="shortest" id="shortest" />

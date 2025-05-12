@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { RecipeTree } from "./RecipeTree"
 import { SearchPanel } from "./SearchPanel"
 import { StatsPanel } from "./StatsPanel"
@@ -36,10 +36,11 @@ export function RecipeExplorer() {
     })
   }
 
-  const handleStatsUpdate = (newStats: any) => {
+  // Use a stable callback to prevent unnecessary re-renders
+  const handleStatsUpdate = useCallback((newStats: { searchTime: number | null; nodesVisited: number | null; recipesFound: number | null }) => {
     console.log("📊 Received stats update:", newStats)
     setStats(newStats)
-  }
+  }, [])
 
   return (
     <div className="space-y-6">

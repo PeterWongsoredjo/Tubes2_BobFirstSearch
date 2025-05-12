@@ -18,11 +18,16 @@ export function RecipeTree({
     alg: "bfs"|"dfs"
     mode: "shortest"|"multiple"
     maxRecipes: number
-    onStatsUpdate?: (stats: any) => void
+    onStatsUpdate?: (stats: {
+      searchTime: number | null;
+      nodesVisited: number | null;
+      recipesFound: number | null;
+    }) => void;
   }) {
     const [graphs, setGraphs] = useState<{ nodes: Node[]; edges: Edge[] }[]>([])
     const networkRefs = useRef<(NetworkType | null)[]>([])
     const containerRefs = useRef<(HTMLDivElement | null)[]>([])
+    const statsUpdatedRef = useRef<boolean>(false)
     const setContainerRef = useCallback((index: number) => (node: HTMLDivElement | null) => {
       containerRefs.current[index] = node;
     }, []);
@@ -30,6 +35,9 @@ export function RecipeTree({
     useEffect(() => {
       console.log("🌳 RecipeTree mounted with props:", { root, alg, mode, maxRecipes })
       if (!root) return
+      
+      // Reset stats updated flag for new searches
+      statsUpdatedRef.current = false
 
       const url = new URL("http://localhost:8080/api/tree")
       url.searchParams.set("root", root)
@@ -44,7 +52,11 @@ export function RecipeTree({
           if (!r.ok) throw new Error(`HTTP ${r.status}`)
           return r.json()
         })
-        .then(async (data: { graphs: { nodes: Node[]; edges: Edge[] }[]; stats: any }) => {
+        .then(async (data: { graphs: { nodes: Node[]; edges: Edge[] }[]; stats: {
+          searchTime: number;
+          nodesVisited: number;
+          recipesFound: number;
+        } }) => {
           console.log("Received data:", data)
           if (!data.graphs || data.graphs.length === 0) {
             console.warn("No graphs received from API")
@@ -52,11 +64,17 @@ export function RecipeTree({
           }
           
           setGraphs(data.graphs)
-          
-          // Send stats to parent component if callback is provided
-          if (onStatsUpdate && data.stats) {
-            console.log("📊 Updating stats:", data.stats)
-            onStatsUpdate(data.stats)
+
+          // Only update stats once per search
+          if (data.stats && onStatsUpdate && !statsUpdatedRef.current) {
+            console.log("Stats:", data.stats)
+            onStatsUpdate({
+              searchTime: data.stats.searchTime,
+              nodesVisited: data.stats.nodesVisited,
+              recipesFound: data.stats.recipesFound
+            })
+            // Mark stats as updated for this search
+            statsUpdatedRef.current = true
           }
           
           // Initialize network refs array
@@ -137,7 +155,7 @@ export function RecipeTree({
         .catch(err => {
           console.error("Failed to load tree:", err)
         })
-    }, [root, alg, mode, maxRecipes]);
+    }, [root, alg, mode, maxRecipes, onStatsUpdate]);
     
     return (
       <Card className="w-full shadow-lg border-amber-800/50 flex flex-col bg-card/90 backdrop-blur-sm">
