@@ -12,11 +12,13 @@ export function RecipeTree({
     alg,
     mode,
     maxRecipes,
+    onStatsUpdate
 }: {
     root: string
     alg: "bfs"|"dfs"
     mode: "shortest"|"multiple"
     maxRecipes: number
+    onStatsUpdate?: (stats: any) => void
   }) {
     const [graphs, setGraphs] = useState<{ nodes: Node[]; edges: Edge[] }[]>([])
     const networkRefs = useRef<(NetworkType | null)[]>([])
@@ -42,7 +44,7 @@ export function RecipeTree({
           if (!r.ok) throw new Error(`HTTP ${r.status}`)
           return r.json()
         })
-        .then(async (data: { graphs: { nodes: Node[]; edges: Edge[] }[] }) => {
+        .then(async (data: { graphs: { nodes: Node[]; edges: Edge[] }[]; stats: any }) => {
           console.log("Received data:", data)
           if (!data.graphs || data.graphs.length === 0) {
             console.warn("No graphs received from API")
@@ -50,6 +52,12 @@ export function RecipeTree({
           }
           
           setGraphs(data.graphs)
+          
+          // Send stats to parent component if callback is provided
+          if (onStatsUpdate && data.stats) {
+            console.log("📊 Updating stats:", data.stats)
+            onStatsUpdate(data.stats)
+          }
           
           // Initialize network refs array
           networkRefs.current = new Array(data.graphs.length).fill(null)

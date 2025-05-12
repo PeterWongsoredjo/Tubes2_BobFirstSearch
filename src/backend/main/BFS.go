@@ -62,7 +62,7 @@ func chainKey(chain []Recipe) string {
 	return strings.Join(parts, ";")
 }
 
-func bfs(target string, idx map[string][][]string, tiers map[string]int, limit int) []([]Recipe) {
+func bfs(target string, idx map[string][][]string, tiers map[string]int, limit int) ([]([]Recipe), int) {
 	queue := []QueueItem{{
 		Elems:   []string{target},
 		Chain:   nil,
@@ -71,6 +71,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 	}}
 	solutions := []([]Recipe){}
 	seenChains := map[string]bool{}
+	nodesVisited := 0
 
 	for depth := 0; len(queue) > 0 && depth < 30; depth++ {
 		nextQueue := []QueueItem{}
@@ -78,6 +79,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 		for len(queue) > 0 {
 			item := queue[0]
 			queue = queue[1:]
+			nodesVisited++
 
 			if len(item.Elems) == 0 {
 				chainList := buildChainList(item.Chain)
@@ -87,7 +89,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 						seenChains[key] = true
 						solutions = append(solutions, deduplicateChain(chainList))
 						if len(solutions) >= limit {
-							return solutions
+							return solutions, nodesVisited
 						}
 					}
 				}
@@ -145,7 +147,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 
 		queue = nextQueue
 	}
-	return solutions
+	return solutions, nodesVisited
 }
 
 func isFullyResolved(chain []Recipe, _ map[string]bool) bool {

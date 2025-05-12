@@ -2,7 +2,6 @@
 "use client"
 import { MainTitle } from "@/components/MainTitle"
 import { RecipeExplorer } from "@/components/RecipeExplorer"
-import { StatsPanel } from "@/components/StatsPanel"
 
 export default function Home() {
   return (
@@ -10,7 +9,6 @@ export default function Home() {
       <div className="container mx-auto p-4 space-y-8">
         <MainTitle />
         <RecipeExplorer />
-        <StatsPanel />
       </div>
     </main>
   )
