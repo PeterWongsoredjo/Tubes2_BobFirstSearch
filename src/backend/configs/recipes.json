@@ -1157,21 +1157,21 @@
   {
     "Result": "Clay",
     "Components": [
-      "Mineral",
+      "Crystal Meth",
       "Sand"
     ]
   },
   {
     "Result": "Clay",
     "Components": [
-      "Mineral",
+      "Crystal Meth",
       "Stone"
     ]
   },
   {
     "Result": "Clay",
     "Components": [
-      "Mineral",
+      "Crystal Meth",
       "Rock"
     ]
   },
@@ -1487,14 +1487,14 @@
     "Result": "Gunpowder",
     "Components": [
       "Charcoal",
-      "Mineral"
+      "Crystal Meth"
     ]
   },
   {
     "Result": "Gunpowder",
     "Components": [
       "Energy",
-      "Mineral"
+      "Crystal Meth"
     ]
   },
   {
@@ -1547,42 +1547,42 @@
     ]
   },
   {
-    "Result": "Mineral",
+    "Result": "Crystal Meth",
     "Components": [
       "Organic matter",
       "Stone"
     ]
   },
   {
-    "Result": "Mineral",
+    "Result": "Crystal Meth",
     "Components": [
       "Organic matter",
       "Rock"
     ]
   },
   {
-    "Result": "Mineral",
+    "Result": "Crystal Meth",
     "Components": [
       "Organic matter",
       "Earth"
     ]
   },
   {
-    "Result": "Mineral",
+    "Result": "Crystal Meth",
     "Components": [
       "Organic matter",
       "Boulder"
     ]
   },
   {
-    "Result": "Mineral",
+    "Result": "Crystal Meth",
     "Components": [
       "Organic matter",
       "Hill"
     ]
   },
   {
-    "Result": "Mineral",
+    "Result": "Crystal Meth",
     "Components": [
       "Organic matter",
       "Mountain"
@@ -3321,7 +3321,7 @@
     "Result": "Steel",
     "Components": [
       "Metal",
-      "Mineral"
+      "Crystal Meth"
     ]
   },
   {
@@ -7073,7 +7073,7 @@
     "Result": "Salt",
     "Components": [
       "Sea",
-      "Mineral"
+      "Crystal Meth"
     ]
   },
   {
@@ -7094,7 +7094,7 @@
     "Result": "Salt",
     "Components": [
       "Ocean",
-      "Mineral"
+      "Crystal Meth"
     ]
   },
   {
@@ -15095,7 +15095,7 @@
     "Result": "Ash",
     "Components": [
       "Fire",
-      "Mineral"
+      "Crystal Meth"
     ]
   },
   {
@@ -18280,7 +18280,7 @@
     "Result": "Battery",
     "Components": [
       "Electricity",
-      "Mineral"
+      "Crystal Meth"
     ]
   },
   {
