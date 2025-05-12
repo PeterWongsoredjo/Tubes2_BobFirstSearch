@@ -26,13 +26,6 @@ type Element struct {
     Tier int
 }
 
-// TreeNode is one node in our decomposition tree.
-type TreeNode struct {
-    ID       int
-    Label    string
-    Children []*TreeNode
-}
-
 type Node struct {
     ID    int    `json:"id"`
     Label string `json:"label"`
@@ -100,7 +93,6 @@ func copyMap(original map[string]bool) map[string]bool {
 	return newMap
 }
 
-// collectEdgesFromChain extracts parent-child relationships from a recipe chain
 func collectEdgesFromChain(chain []Recipe) [][2]string {
 	var pairs [][2]string
 	for _, step := range chain {

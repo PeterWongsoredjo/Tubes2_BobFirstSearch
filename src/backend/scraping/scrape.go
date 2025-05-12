@@ -59,7 +59,6 @@ func BuildMythAndMonstersBlacklist(elements []string) map[string]bool {
 	return blacklist
 }
 
-// ScrapeElementList meng-scrape semua element dari halaman Little Alchemy 2
 func ScrapeElementList() ([]Element, error) {
     url := "https://little-alchemy.fandom.com/wiki/Elements_(Little_Alchemy_2)"
     baseURL := "https://little-alchemy.fandom.com"
@@ -99,7 +98,7 @@ func ScrapeElementList() ([]Element, error) {
 
         if exists && titleExists && strings.HasPrefix(href, "/wiki/") {
             if !strings.Contains(href, ":") { 
-				if !blacklist[title] && !seen[title] && title != "Elements (Little Alchemy 1)" && title != "Elements (Little Alchemy 2)" && title != "Elements (Myths and Monsters)"{ // Cek kalau belum pernah
+				if !blacklist[title] && !seen[title] && title != "Elements (Little Alchemy 1)" && title != "Elements (Little Alchemy 2)" && title != "Elements (Myths and Monsters)"{
                     seen[title] = true
                     fullURL := baseURL + href
                     elements = append(elements, Element{
@@ -111,7 +110,6 @@ func ScrapeElementList() ([]Element, error) {
             }
         }
     })
-
     return elements, nil
 }
 

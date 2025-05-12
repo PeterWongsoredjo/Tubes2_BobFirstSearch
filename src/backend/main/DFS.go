@@ -65,12 +65,10 @@ func dfs(target string, depth int, built map[string]bool) ([]Step, bool) {
 func dfsAll(target string, built map[string]bool, limit int, parent string) ([][]Step, int) {
 	nodesVisited := 1 // node ori
 
-	// If the element is a base element, return it immediately
 	if baseElements[target] {
 		return [][]Step{{Step{Target: target, Parent: parent}}}, nodesVisited
 	}
 
-	// If the target has already been built, skip it
 	if built[target] {
 		return nil, nodesVisited
 	}
@@ -148,7 +146,7 @@ func dfsAll(target string, built map[string]bool, limit int, parent string) ([][
 
 	// Ruby chan haiiiiiii
 	built[target] = true //nani ga suki
-	return allChains, nodesVisited
+	return allChains, nodesVisited //🍆🍆💦
 }
 //JOKO MINTOOOOOOOOOOOO
 
@@ -259,7 +257,6 @@ func maidn() {
 
 	tree := buildTrueTreeFromDFS("Human", solutions[0], 0)
 
-	// Output Tree JSON
 	jsonData, err := json.MarshalIndent(tree, "", "  ")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error marshalling JSON: %v\n", err)
