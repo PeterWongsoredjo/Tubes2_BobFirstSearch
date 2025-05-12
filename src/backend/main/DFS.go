@@ -1,9 +1,9 @@
 package main
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"fmt"
-	//"os"
+	"os"
 )
 
 var recipeMap map[string][][]string
@@ -83,12 +83,11 @@ func dfsAll(target string, built map[string]bool, limit int, parent string) ([][
 			left, right := components[0], components[1]
 
 			if elementMap[target] > elementMap[left] && elementMap[target] > elementMap[right] {
-				leftChains, leftVisited := dfsAll(left, copyMap(built), limit, target)
-				rightChains, rightVisited := dfsAll(right, copyMap(built), limit, target)
-				nodesVisited += leftVisited + rightVisited
+				if(left == right && !baseElements[left]) {
+					leftChains, leftVisited := dfsAll(left, copyMap(built), limit, target)
+					nodesVisited += leftVisited
 
-				for _, l := range leftChains {
-					for _, r := range rightChains {
+					for _, l := range leftChains {
 						if len(allChains) >= limit {
 							break
 						}
@@ -98,20 +97,49 @@ func dfsAll(target string, built map[string]bool, limit int, parent string) ([][
 						for _, step := range l {
 							newChain = append(newChain, step)
 						}
-
-						for _, step := range r {
-							newChain = append(newChain, step)
-						}
-
 						newChain = append(newChain, Step{
 							Target: target,
 							Parent: parent,
 						})
-
+						allChains = append(allChains, newChain)
 						sig := chainSignature(newChain)
 						if !seenChains[sig] {
 							allChains = append(allChains, newChain)
 							seenChains[sig] = true
+						}
+					
+					}
+				} else {
+					leftChains, leftVisited := dfsAll(left, copyMap(built), limit, target)
+					rightChains, rightVisited := dfsAll(right, copyMap(built), limit, target)
+					nodesVisited += leftVisited + rightVisited
+
+					for _, l := range leftChains {
+						for _, r := range rightChains {
+							if len(allChains) >= limit {
+								break
+							}
+
+							newChain := []Step{}
+
+							for _, step := range l {
+								newChain = append(newChain, step)
+							}
+
+							for _, step := range r {
+								newChain = append(newChain, step)
+							}
+
+							newChain = append(newChain, Step{
+								Target: target,
+								Parent: parent,
+							})
+
+							sig := chainSignature(newChain)
+							if !seenChains[sig] {
+								allChains = append(allChains, newChain)
+								seenChains[sig] = true
+							}
 						}
 					}
 				}
@@ -123,6 +151,101 @@ func dfsAll(target string, built map[string]bool, limit int, parent string) ([][
 	return allChains, nodesVisited
 }
 
+func buildTrueTreeFromDFS(root string, steps []Step, idx int) GraphResponse {
+	// Reverse the steps to build the tree from the root.
+	reverseChain(steps) // Ensure the last step is the root (Human)
+	//fmt.Println(steps)
+	if len(steps) > 0{
+		steps = steps[1:]
+	}
+	
+
+	nextID := (1000 * idx) + 1
+	nodes := []Node{}
+	edges := []Edge{}
+
+	nodeIDs := map[string]int{}
+	parentOf := map[string]string{}
+	childCount := map[string]int{}
+
+	// Initialize the root node first
+	nodeIDs[root] = nextID
+	nextID++
+	nodes = append(nodes, Node{ID: nodeIDs[root], Label: root}) // Add root node
+
+	// Create a map to hold the parent-child relationships
+	for _, step := range steps {
+		// Ensure that each child gets added
+		fmt.Println("Node: ", step.Target, ", Parent: ", step.Parent)
+		nodeIDs[step.Target] = nextID
+			nextID++
+			nodes = append(nodes, Node{ID: nodeIDs[step.Target], Label: step.Target})
+
+		// Now link the parent with the child
+		if step.Parent != "" {
+			// Make sure the parent node exists in the tree
+			if _, exists := nodeIDs[step.Parent]; !exists {
+				nodeIDs[step.Parent] = nextID
+				nextID++
+				nodes = append(nodes, Node{ID: nodeIDs[step.Parent], Label: step.Parent}) // Add parent node if it doesn't exist
+			}
+
+			// Add the parent-child relationship
+			parentOf[step.Target] = step.Parent
+			childCount[step.Parent]++
+
+			// Create an edge from parent to the target (child)
+			edges = append(edges, Edge{
+				From: nodeIDs[step.Parent],
+				To:   nodeIDs[step.Target],
+			})
+		}
+	}
+
+	for parent, count := range childCount {
+        if count == 1 {
+            // Find the existing child of this parent
+            for target, p := range parentOf {
+                if p == parent {
+                    // Duplicate the child node
+                    duplicateID := nextID
+                    nextID++
+                    nodes = append(nodes, Node{ID: duplicateID, Label: target})
+                    edges = append(edges, Edge{
+                        From: nodeIDs[parent],
+                        To:   duplicateID,
+                    })
+                    break
+                }
+            }
+        }
+    }
+
+	// Return the GraphResponse with nodes and edges
+	return GraphResponse{Nodes: nodes, Edges: edges}
+}
+
+
+
+
+// Function to reverse the chain of steps (to build the tree in the correct order).
+func reverseChain(chain []Step) {
+	for i, j := 0, len(chain)-1; i < j; i, j = i+1, j-1 {
+		chain[i], chain[j] = chain[j], chain[i]
+	}
+}
+
+// Helper function to check for duplicate chains.
+func isDuplicateChain(chain []Step, seenChains map[string]bool) bool {
+	sig := chainSignature(chain)
+	if seenChains[sig] {
+		return true
+	}
+	seenChains[sig] = true
+	return false
+}
+
+// Build a unique signature for each chain.
 func chainSignature(chain []Step) string {
 	s := ""
 	for _, step := range chain {
@@ -131,50 +254,9 @@ func chainSignature(chain []Step) string {
 	return s
 }
 
-func buildTrueTreeFromDFS(root string, steps []Step, idx int) GraphResponse {
-	type nodeKey struct {
-		Label  string
-		Parent string
-	}
 
-	nextID := (1000 * idx) + 1
-	nodes := []Node{}
-	edges := []Edge{}
 
-	nodeIDs := map[string]int{}
-	parentOf := map[string]string{}
-
-	for _, step := range steps {
-		if _, exists := nodeIDs[step.Target]; !exists {
-			nodeIDs[step.Target] = nextID
-			nextID++
-		}
-		if step.Parent != "" {
-			if _, exists := nodeIDs[step.Parent]; !exists {
-				nodeIDs[step.Parent] = nextID
-				nextID++
-			}
-			parentOf[step.Target] = step.Parent
-		}
-	}
-
-	for label, id := range nodeIDs {
-		node := Node{ID: id, Label: label}
-		if parentLabel, ok := parentOf[label]; ok {
-			node.Parent = nodeIDs[parentLabel]
-			edges = append(edges, Edge{
-				From: node.Parent,
-				To:   id,
-			})
-		}
-		nodes = append(nodes, node)
-	}
-
-	return GraphResponse{Nodes: nodes, Edges: edges}
-}
-
-/*
-func maien() {
+func maidn() {
 	recipes, err := loadRecipes("configs/recipes.json")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error loading recipes: %v\n", err)
@@ -189,9 +271,10 @@ func maien() {
 
 	buildRecipeMap(recipes)
 	elementMap = tiers
-
 	built := map[string]bool{}
-	solutions := dfsAll("Human", built, 1, "", )
+	solutions, _ := dfsAll("Human", built, 1, "")
+
+
 
 	for _, chain := range solutions {
 		fmt.Println(chain)
@@ -210,7 +293,7 @@ func maien() {
 		fmt.Fprintf(os.Stderr, "error marshalling JSON: %v\n", err)
 		os.Exit(1)
 	}
-
+	
 	fmt.Println("Tree JSON for DFS Solution:")
 	fmt.Println(string(jsonData))
 
@@ -226,4 +309,4 @@ func countUsesInChain(element string, chain []Step) int {
 	}
 	return count
 }
-*/
+
