@@ -94,7 +94,7 @@ export function SearchPanel({ onSearch }: Props) {
                   <div className="space-y-0.5">
                     <Label className="text-amber-200">Search mode</Label>
                     <p className="text-sm text-amber-200/70">
-                      Shortest path or multiple recipes
+                      Single or multiple recipes
                     </p>
                   </div>
                   <RadioGroup
@@ -104,7 +104,7 @@ export function SearchPanel({ onSearch }: Props) {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="shortest" id="shortest" />
                         <Label htmlFor="shortest" className="cursor-pointer text-amber-200">
-                          Shortest
+                          Single
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -124,21 +124,29 @@ export function SearchPanel({ onSearch }: Props) {
                   <Label htmlFor="maxRecipes" className="text-amber-200">
                     # of Recipes
                   </Label>
-                  <Select
+                  <Input
+                    id="maxRecipes"
+                    placeholder="Enter number..."
+                    className="border-amber-800/50 bg-secondary/50 w-[120px] text-amber-300"
                     value={maxRecipes}
-                    onValueChange={(val) => setMaxRecipes(val)}
-                  >
-                    <SelectTrigger className="border-amber-800/50 bg-secondary/50 w-[120px]">
-                      <SelectValue placeholder="Select max" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-amber-800/50">
-                      {Array.from({ length: 10 }, (_, i) => (
-                        <SelectItem key={i + 1} value={`${i + 1}`}>
-                          {i + 1}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => {
+                      // Only allow numeric values
+                      const value = e.target.value;
+                      if (value === '' || /^[0-9]+$/.test(value)) {
+                        // Limit to reasonable range (1-50)
+                        const numValue = parseInt(value || "1", 10);
+                        if (!value || (numValue >= 1 && numValue <= 50)) {
+                          setMaxRecipes(value);
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      // Ensure valid value on blur
+                      if (maxRecipes === '' || parseInt(maxRecipes, 10) < 1) {
+                        setMaxRecipes("1");
+                      }
+                    }}
+                  />
                 </div>
               )}
 
