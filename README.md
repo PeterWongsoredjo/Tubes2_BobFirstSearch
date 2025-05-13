@@ -52,9 +52,15 @@ BFS is a search algorithm that explores a graph level by level. Starting from th
     go mod tidy
     ```
 
-4. **Docker (Optional)**:
+4. **Docker**:
+   - Move to the root directory of the project.
+    ```bash
+    cd src
+    ```
    - For containerization, use Docker Compose to build and start the containers.
-
+    ```bash
+    docker-compose up --build
+    ```
 ---
 
 ## Commands to Run the Program
