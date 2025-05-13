@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	//"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -18,6 +19,13 @@ type StatsRespone struct {
 	SearchTime   int `json:"searchTime"`
 	NodesVisited int `json:"nodesVisited"`
 	RecipesFound int `json:"recipesFound"`
+}
+
+func getConfigDir() string {
+	if envDir := os.Getenv("CONFIG_DIR"); envDir != "" {
+		return envDir
+	}
+	return "configs"
 }
 
 func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFunc {
@@ -53,7 +61,8 @@ func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFu
 			stats.NodesVisited = nodesVisited
 			response.Graphs = buildMultipleTrees(root, chains)
 		case "dfs":
-			recipes, err := loadRecipes("configs/recipes.json")
+			cfgDir := getConfigDir()
+			recipes, err := loadRecipes(filepath.Join(cfgDir, "recipes.json"))
 			if err != nil {
 				http.Error(w, "Error loading recipes", http.StatusInternalServerError)
 				return
@@ -96,11 +105,12 @@ func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFu
 }
 
 func main() {
-	recipes, err := loadRecipes("configs/recipes.json")
+	cfgDir := getConfigDir()
+	recipes, err := loadRecipes(filepath.Join(cfgDir, "recipes.json"))
 	if err != nil {
 		log.Fatalf("loadRecipes: %v", err)
 	}
-	tiers, err := loadTiers("configs/tiers.json")
+	tiers, err := loadTiers(filepath.Join(cfgDir, "tiers.json"))
 	if err != nil {
 		log.Fatalf("loadTiers: %v", err)
 	}

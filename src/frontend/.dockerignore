@@ -1,0 +1,12 @@
+# Ignore node_modules (you will install dependencies in the Dockerfile)
+node_modules
+
+# Ignore Docker-related files if not needed in the container
+.dockerignore
+Dockerfile
+
+# Ignore other unnecessary files/folders
+*.md
+
+# DO NOT ignore .next if you're building outside Docker
+# .next

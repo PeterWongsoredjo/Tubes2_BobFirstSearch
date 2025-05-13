@@ -96,6 +96,7 @@ func capitalizeWords(s string) string {
             r := []rune(word)
             r[0] = unicode.ToUpper(r[0])
             words[i] = string(r)
+            break
         }
     }
     return strings.Join(words, " ")
