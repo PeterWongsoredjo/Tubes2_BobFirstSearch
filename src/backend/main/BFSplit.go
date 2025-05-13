@@ -13,12 +13,12 @@ const (
 )
 
 type ElementNode struct {
-	ID       int            // Unique identifier
-	Element  string         // Element name
-	Status   ElementStatus  // Current status
-	Parent   *ElementNode   // Parent node (null for root)
-	Children []*ElementNode // Child nodes (components)
-	Recipe   Recipe         // Recipe used to create this element
+	ID       int
+	Element  string
+	Status   ElementStatus
+	Parent   *ElementNode
+	Children []*ElementNode
+	Recipe   Recipe
 }
 
 type QueueItem struct {
@@ -289,36 +289,3 @@ func resolveStatus(el string) ElementStatus {
 	}
 	return Processing
 }
-
-
-/*
-func newbuildMultipleTrees(root string, chains [][]Recipe) []GraphResponse {
-    var trees []GraphResponse
-
-    for i, chain := range chains {
-        if len(chain) == 0 {
-            continue
-        }
-
-        tree := buildTreeFromRecipeChain(root, chain, i)
-        trees = append(trees, tree)
-    }
-
-    return trees
-}
-
-
-func collectEdgesFromSplitBFSChain(chain []Recipe) [][2]string {
-	var pairs [][2]string
-
-	for _, recipe := range chain {
-		parent := recipe.Result
-		for _, child := range recipe.Components {
-			pair := [2]string{parent, child}
-			pairs = append(pairs, pair)
-		}
-	}
-
-	return pairs
-}
-*/

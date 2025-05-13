@@ -1,11 +1,7 @@
 package main
 
 import (
-	//"encoding/json"
-	//"fmt"
 	"fmt"
-	//"log"
-	//"os"
 	"sync"
 	"sync/atomic"
 )
@@ -43,7 +39,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 	nodesVisited := 0
 
 	var mu sync.Mutex
-	var limitReached int32 = 0 // atomic flag
+	var limitReached int32 = 0
 
 	for depth := 0; len(queue) > 0 && depth < 50; depth++ {
 		if atomic.LoadInt32(&limitReached) == 1 {

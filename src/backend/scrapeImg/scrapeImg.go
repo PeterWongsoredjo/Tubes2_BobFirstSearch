@@ -42,7 +42,6 @@ func main() {
             downloadImage(src)
         }
     })
-	
 }
 
 func downloadImage(url string) {

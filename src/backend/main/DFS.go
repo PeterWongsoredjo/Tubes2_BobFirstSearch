@@ -1,9 +1,7 @@
 package main
 
 import (
-	//"encoding/json"
 	"fmt"
-	//"os"
 	"sync"
 )
 
@@ -24,7 +22,7 @@ func buildRecipeMap(recipes []Recipe) {
 
 
 func dfsAll(target string, built map[string]bool, limit int, parent string) ([][]Step, int) {
-	nodesVisited := 1 // node ori
+	nodesVisited := 1
 
 	if baseElements[target] {
 		return [][]Step{{Step{Target: target, Parent: parent}}}, nodesVisited
@@ -107,7 +105,7 @@ func dfsAll(target string, built map[string]bool, limit int, parent string) ([][
 
 	// Ruby chan haiiiiiii
 	built[target] = true //nani ga suki
-	return allChains, nodesVisited //🍆🍆💦
+	return allChains, nodesVisited
 }
 //JOKO MINTOOOOOOOOOOOO
 
@@ -244,8 +242,6 @@ func maidn() {
 	elementMap = tiers
 	built := map[string]bool{}
 	solutions, _ := dfsAll("Human", built, 1, "")
-
-
 
 	for _, chain := range solutions {
 		fmt.Println(chain)

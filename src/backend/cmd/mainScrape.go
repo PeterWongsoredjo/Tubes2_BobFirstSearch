@@ -1,4 +1,3 @@
-// backend/scraper.go
 package main
 
 import (

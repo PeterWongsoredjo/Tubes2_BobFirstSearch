@@ -3,7 +3,6 @@ import { RecipeTree } from "./RecipeTree"
 import { SearchPanel } from "./SearchPanel"
 import { StatsPanel } from "./StatsPanel"
 
-// RecipeExplorer.tsx
 export function RecipeExplorer() {
   const [root, setRoot] = useState<string>("")
   const [alg, setAlg] = useState<"bfs"|"dfs"|"splitbfs">("bfs")
@@ -28,7 +27,6 @@ export function RecipeExplorer() {
     setMode(mode)
     setMax(maxRecipes)
     setNonce(n => n+1)
-    // Reset stats when starting a new search
     setStats({
       searchTime: null,
       nodesVisited: null,
@@ -36,7 +34,6 @@ export function RecipeExplorer() {
     })
   }
 
-  // Use a stable callback to prevent unnecessary re-renders
   const handleStatsUpdate = useCallback((newStats: { searchTime: number | null; nodesVisited: number | null; recipesFound: number | null }) => {
     console.log("📊 Received stats update:", newStats)
     setStats(newStats)

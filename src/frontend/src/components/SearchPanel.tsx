@@ -31,7 +31,6 @@ export function SearchPanel({ onSearch }: Props) {
   const [mode, setMode] = useState<"shortest" | "multiple">("shortest")
   const [maxRecipes, setMaxRecipes] = useState("5")
 
-  // Enforce "shortest" mode when splitbfs is selected
   useEffect(() => {
     if (alg === "splitbfs" && mode === "multiple") {
       setMode("shortest")
@@ -135,14 +134,12 @@ export function SearchPanel({ onSearch }: Props) {
                   </Label>
                   <Input
                     id="maxRecipes"
-                    placeholder="Enter number..."
+                    placeholder="Enter number (1-50)..."
                     className="border-amber-800/50 bg-secondary/50 w-[120px] text-amber-300"
                     value={maxRecipes}
                     onChange={(e) => {
-                      // Only allow numeric values
                       const value = e.target.value;
                       if (value === '' || /^[0-9]+$/.test(value)) {
-                        // Limit to reasonable range (1-50)
                         const numValue = parseInt(value || "1", 10);
                         if (!value || (numValue >= 1 && numValue <= 50)) {
                           setMaxRecipes(value);
@@ -150,7 +147,6 @@ export function SearchPanel({ onSearch }: Props) {
                       }
                     }}
                     onBlur={() => {
-                      // Ensure valid value on blur
                       if (maxRecipes === '' || parseInt(maxRecipes, 10) < 1) {
                         setMaxRecipes("1");
                       }

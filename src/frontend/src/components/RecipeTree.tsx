@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
 import type { Network as NetworkType, Node, Edge } from "vis-network"
 import { DataSet } from "vis-data"
-///mport Image from "next/image"
 
 export function RecipeTree({
     root,
@@ -35,8 +34,6 @@ export function RecipeTree({
     useEffect(() => {
       console.log("🌳 RecipeTree mounted with props:", { root, alg, mode, maxRecipes })
       if (!root) return
-      
-      // Reset stats updated flag for new searches
       statsUpdatedRef.current = false
 
       const url = new URL("http://localhost:8080/api/tree")
@@ -65,7 +62,6 @@ export function RecipeTree({
           
           setGraphs(data.graphs)
 
-          // Only update stats once per search
           if (data.stats && onStatsUpdate && !statsUpdatedRef.current) {
             console.log("Stats:", data.stats)
             onStatsUpdate({
@@ -73,11 +69,9 @@ export function RecipeTree({
               nodesVisited: data.stats.nodesVisited,
               recipesFound: data.stats.recipesFound
             })
-            // Mark stats as updated for this search
             statsUpdatedRef.current = true
           }
           
-          // Initialize network refs array
           networkRefs.current = new Array(data.graphs.length).fill(null)
           containerRefs.current = new Array(data.graphs.length).fill(null)
           
@@ -86,8 +80,6 @@ export function RecipeTree({
             data.graphs.forEach((graph, index) => {
               const container = containerRefs.current[index]
               if (!container) return
-              
-              // Enhance nodes with image information
               const enhancedNodes = graph.nodes.map(node => {
                 const label = node.label || 'unknown';
                 return {
@@ -182,7 +174,6 @@ export function RecipeTree({
               className="h-[500px] w-full border border-amber-800/30 rounded-md bg-amber-950/30 shadow-inner"
             />
           ) : (
-            // Multiple trees view - grid
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {graphs.map((_, index) => (
                 <div key={index} className="relative">
