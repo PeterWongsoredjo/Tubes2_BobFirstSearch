@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 10% 12%;
+    --foreground: 48 30% 90%;
+
+    --card: 220 10% 15%;
+    --card-foreground: 48 30% 90%;
+
+    --popover: 220 10% 15%;
+    --popover-foreground: 48 30% 90%;
+
+    --primary: 48 70% 70%;
+    --primary-foreground: 220 10% 12%;
+
+    --secondary: 220 10% 20%;
+    --secondary-foreground: 48 30% 90%;
+
+    --muted: 220 10% 20%;
+    --muted-foreground: 48 20% 70%;
+
+    --accent: 48 50% 50%;
+    --accent-foreground: 220 10% 12%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 48 30% 90%;
+
+    --border: 48 30% 40%;
+    --input: 220 10% 20%;
+    --ring: 48 70% 70%;
+
+    --radius: 0.5rem;
+  }
+
+  .light-theme {
+    --background: 0 0% 100%;
+    --foreground: 220 10% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 10% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 10% 12%;
+
+    --primary: 48 70% 50%;
+    --primary-foreground: 220 10% 12%;
+
+    --secondary: 48 30% 95%;
+    --secondary-foreground: 220 10% 12%;
+
+    --muted: 48 30% 95%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 48 50% 90%;
+    --accent-foreground: 220 10% 12%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 48 30% 90%;
+
+    --border: 220 10% 80%;
+    --input: 220 10% 80%;
+    --ring: 48 70% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: url("/images/alchemy-background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+  }
+}
+
+.celestial-background {
+  position: relative;
+}
+
+.celestial-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("/images/alchemy-background.jpg");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  z-index: -1;
+  pointer-events: none;
+}

@@ -1,0 +1,50 @@
+services:
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend  # Path to your frontend directory
+      dockerfile: Dockerfile  # Dockerfile for the frontend build
+    ports:
+      - "3000:3000"  # Exposes port 3000 for frontend (React app)
+    depends_on:
+      - cmd  # Ensures cmd backend service starts first
+      - main  # Ensures main backend service starts as well
+
+  # Backend Service (cmd - Port 8081)
+  cmd:
+    build:
+      context: ./backend  # Path to your backend directory
+      dockerfile: Dockerfile  # Dockerfile for the backend build
+    command: /server  # Runs the `cmd` binary
+    ports:
+      - "8081:8081"  # Exposes port 8081 for cmd
+    volumes:
+      - ./backend:/app  # Sync local backend code with the container
+      - ./src/backend/configs:/configs 
+    environment:
+      - CONFIG_DIR=/configs  # Environment variable for config folder
+
+  # Backend Service (main - Port 8080)
+  main:
+    build:
+      context: ./backend  # Path to your backend directory
+      dockerfile: Dockerfile  # Dockerfile for the backend build
+    command: /main  # Runs the `main` binary
+    ports:
+      - "8080:8080"  # Exposes port 8080 for main
+    restart: always
+    volumes:
+      - ./backend:/app  # Sync local backend code with the container
+      - ./src/backend/configs:/configs  # Mount configs directory as writable volume
+    environment:
+      - CONFIG_DIR=/configs  # Environment variable for config folder
+
+# Optional: Add a database or caching service here if needed
+# db:
+#   image: postgres:alpine
+#   environment:
+#     POSTGRES_USER: user
+#     POSTGRES_PASSWORD: password
+#     POSTGRES_DB: mydb
+#   ports:
+#     - "5432:5432"  # Exposes PostgreSQL port
