@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,7 +19,7 @@ import {
 type Props = {
   onSearch: (
     element: string,
-    alg: "bfs" | "dfs",
+    alg: "bfs" | "dfs" | "splitbfs",
     mode: "shortest" | "multiple",
     maxRecipes: number
   ) => void
@@ -27,9 +27,16 @@ type Props = {
 
 export function SearchPanel({ onSearch }: Props) {
   const [element, setElement] = useState("")
-  const [alg, setAlg] = useState<"bfs" | "dfs">("bfs")
+  const [alg, setAlg] = useState<"bfs" | "dfs" | "splitbfs">("bfs")
   const [mode, setMode] = useState<"shortest" | "multiple">("shortest")
   const [maxRecipes, setMaxRecipes] = useState("5")
+
+  // Enforce "shortest" mode when splitbfs is selected
+  useEffect(() => {
+    if (alg === "splitbfs" && mode === "multiple") {
+      setMode("shortest")
+    }
+  }, [alg, mode])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -79,13 +86,14 @@ export function SearchPanel({ onSearch }: Props) {
               <Label htmlFor="algorithm" className="text-amber-200">
                 Search algorithm
               </Label>
-              <Select value={alg} onValueChange={(val: "bfs" | "dfs") => setAlg(val)}>
+              <Select value={alg} onValueChange={(val: "bfs" | "dfs" | "splitbfs") => setAlg(val)}>
                 <SelectTrigger id="algorithm" className="border-amber-800/50 bg-secondary/50">
                   <SelectValue placeholder="Select algorithm" />
                 </SelectTrigger>
                 <SelectContent className="bg-card border-amber-800/50">
                   <SelectItem value="bfs">Breadth-First Search (BFS)</SelectItem>
                   <SelectItem value="dfs">Depth-First Search (DFS)</SelectItem>
+                  <SelectItem value="splitbfs">Split Breadth-First Search</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -98,7 +106,7 @@ export function SearchPanel({ onSearch }: Props) {
                     </p>
                   </div>
                   <RadioGroup
-                    defaultValue={mode}
+                    value={mode}
                     onValueChange={(val: "shortest" | "multiple") => setMode(val)}
                     className="flex space-x-4">
                       <div className="flex items-center space-x-2">
@@ -108,9 +116,10 @@ export function SearchPanel({ onSearch }: Props) {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="multiple" id="multiple" />
-                        <Label htmlFor="multiple" className="cursor-pointer text-amber-200">
+                        <RadioGroupItem value="multiple" id="multiple" disabled={alg === "splitbfs"} />
+                        <Label htmlFor="multiple" className={`cursor-pointer ${alg === "splitbfs" ? "text-amber-200/50" : "text-amber-200"}`}>
                           Multiple
+                          {alg === "splitbfs" && <span className="ml-2 text-xs">(Not available)</span>}
                         </Label>
                       </div>
                   </RadioGroup>

@@ -74,6 +74,10 @@ func treeHandler(idx map[string][][]string, tiers map[string]int) http.HandlerFu
 			}
 
 			response.Graphs = graphs
+		case "splitbfs":
+			chains, nodesVisited := splitbfs(root, idx, tiers, 1)
+			stats.NodesVisited = nodesVisited
+			response.Graphs = buildMultipleTrees(root, chains)
 		}
 
 		elapsedMs := int(time.Since(startTime).Milliseconds())

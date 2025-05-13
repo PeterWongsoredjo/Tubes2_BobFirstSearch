@@ -15,7 +15,7 @@ export function RecipeTree({
     onStatsUpdate
 }: {
     root: string
-    alg: "bfs"|"dfs"
+    alg: "bfs"|"dfs"|"splitbfs"
     mode: "shortest"|"multiple"
     maxRecipes: number
     onStatsUpdate?: (stats: {

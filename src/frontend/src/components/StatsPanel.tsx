@@ -11,7 +11,7 @@ type Stats = {
 
 type StatsPanelProps = {
   stats: Stats
-  alg: "bfs" | "dfs"
+  alg: "bfs" | "dfs" | "splitbfs"
   mode: "shortest" | "multiple"
 }
 
@@ -24,7 +24,15 @@ export function StatsPanel({ stats, alg, mode }: StatsPanelProps) {
     return `${(ms / 1000).toFixed(2)} s`
   }
   
-  const algName = alg === "bfs" ? "Breadth-First Search" : "Depth-First Search"
+  const getAlgName = () => {
+    switch(alg) {
+      case "bfs": return "Breadth-First Search";
+      case "dfs": return "Depth-First Search";
+      case "splitbfs": return "Split Breadth-First Search";
+      default: return "Unknown Algorithm";
+    }
+  }
+  
   const modeText = mode === "shortest" ? "Shortest Path" : "Multiple Paths"
 
   return (
@@ -38,7 +46,7 @@ export function StatsPanel({ stats, alg, mode }: StatsPanelProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-amber-950/30 p-3 rounded-md border border-amber-800/30">
             <div className="text-sm text-amber-200/70 mb-1">Algorithm</div>
-            <div className="text-lg text-amber-100 font-medium">{algName}</div>
+            <div className="text-lg text-amber-100 font-medium">{getAlgName()}</div>
             <div className="text-xs text-amber-300/80 mt-1">Mode: {modeText}</div>
           </div>
           

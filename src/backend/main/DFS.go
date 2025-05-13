@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
-	"os"
+	//"os"
 	"sync"
 )
 
@@ -20,45 +20,6 @@ func buildRecipeMap(recipes []Recipe) {
 	for _, r := range recipes {
 		recipeMap[r.Result] = append(recipeMap[r.Result], r.Components)
 	}
-}
-
-func dfs(target string, depth int, built map[string]bool) ([]Step, bool) {
-	if baseElements[target] {
-		return nil, true
-	}
-
-	if built[target] {
-		return nil, true
-	}
-
-	if componentsList, ok := recipeMap[target]; ok {
-		for _, components := range componentsList {
-			left, right := components[0], components[1]
-			if elementMap[target] > elementMap[left] && elementMap[target] > elementMap[right] {
-				var leftChain, rightChain []Step
-				var ok1, ok2 bool
-
-				if left == right {
-					leftChain, ok1 = dfs(left, depth+1, built)
-					rightChain = []Step{}
-					ok2 = ok1
-				} else {
-					leftChain, ok1 = dfs(left, depth+1, built)
-					rightChain, ok2 = dfs(right, depth+1, built)
-				}
-
-				if ok1 && ok2 {
-					built[target] = true
-
-					chain := append([]Step{}, leftChain...)
-					chain = append(chain, rightChain...)
-					chain = append(chain, Step{Target: target})
-					return chain, true
-				}
-			}
-		}
-	}
-	return nil, false
 }
 
 
@@ -224,6 +185,46 @@ func chainSignature(chain []Step) string {
 	return s
 }
 
+/*
+
+func dfs(target string, depth int, built map[string]bool) ([]Step, bool) {
+	if baseElements[target] {
+		return nil, true
+	}
+
+	if built[target] {
+		return nil, true
+	}
+
+	if componentsList, ok := recipeMap[target]; ok {
+		for _, components := range componentsList {
+			left, right := components[0], components[1]
+			if elementMap[target] > elementMap[left] && elementMap[target] > elementMap[right] {
+				var leftChain, rightChain []Step
+				var ok1, ok2 bool
+
+				if left == right {
+					leftChain, ok1 = dfs(left, depth+1, built)
+					rightChain = []Step{}
+					ok2 = ok1
+				} else {
+					leftChain, ok1 = dfs(left, depth+1, built)
+					rightChain, ok2 = dfs(right, depth+1, built)
+				}
+
+				if ok1 && ok2 {
+					built[target] = true
+
+					chain := append([]Step{}, leftChain...)
+					chain = append(chain, rightChain...)
+					chain = append(chain, Step{Target: target})
+					return chain, true
+				}
+			}
+		}
+	}
+	return nil, false
+}
 
 
 func maidn() {
@@ -267,4 +268,4 @@ func maidn() {
 	fmt.Println(string(jsonData))
 
 }
-
+*/
