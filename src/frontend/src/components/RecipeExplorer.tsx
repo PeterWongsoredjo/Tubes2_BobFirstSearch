@@ -6,7 +6,7 @@ import { StatsPanel } from "./StatsPanel"
 // RecipeExplorer.tsx
 export function RecipeExplorer() {
   const [root, setRoot] = useState<string>("")
-  const [alg, setAlg] = useState<"bfs"|"dfs">("bfs")
+  const [alg, setAlg] = useState<"bfs"|"dfs"|"splitbfs">("bfs")
   const [mode, setMode] = useState<"shortest"|"multiple">("shortest")
   const [max, setMax] = useState<number>(5)
   const [nonce, setNonce] = useState(0)
@@ -18,11 +18,11 @@ export function RecipeExplorer() {
 
   const handleSearch = (
     element: string,
-    algorithm: "bfs"|"dfs",
+    algorithm: "bfs"|"dfs"|"splitbfs",
     mode: "shortest"|"multiple",
     maxRecipes: number
   ) => {
-    console.log("↗️ RecipeExplorer.handleSearch got:", { element, algorithm, mode, maxRecipes })
+    console.log("RecipeExplorer.handleSearch got:", { element, algorithm, mode, maxRecipes })
     setRoot(element)
     setAlg(algorithm)
     setMode(mode)
