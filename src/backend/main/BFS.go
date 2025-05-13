@@ -45,7 +45,7 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 	var mu sync.Mutex
 	var limitReached int32 = 0 // atomic flag
 
-	for depth := 0; len(queue) > 0 && depth < 30; depth++ {
+	for depth := 0; len(queue) > 0 && depth < 50; depth++ {
 		if atomic.LoadInt32(&limitReached) == 1 {
 			break
 		}
