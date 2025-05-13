@@ -6,6 +6,8 @@ import (
 	"fmt"
 	//"log"
 	//"os"
+	"sync"
+	"sync/atomic"
 )
 
 type ChainNode struct {
@@ -40,80 +42,129 @@ func bfs(target string, idx map[string][][]string, tiers map[string]int, limit i
 	seenChains := map[string]bool{}
 	nodesVisited := 0
 
+	var mu sync.Mutex
+	var limitReached int32 = 0 // atomic flag
+
 	for depth := 0; len(queue) > 0 && depth < 30; depth++ {
+		if atomic.LoadInt32(&limitReached) == 1 {
+			break
+		}
+
 		nextQueue := []QueueItemO{}
+		var wg sync.WaitGroup
+		var nextQueueMu sync.Mutex
 
-		for len(queue) > 0 {
-			item := queue[0]
-			queue = queue[1:]
-			nodesVisited++
+		currentQueue := make([]QueueItemO, len(queue))
+		copy(currentQueue, queue)
+		queue = nil
 
-			if len(item.Elems) == 0 {
-				chainList := buildChainList(item.Chain)
-				if isFullyResolved(chainList, nil) {
-					key := chainKey(chainList)
-					if !seenChains[key] {
-						seenChains[key] = true
-						solutions = append(solutions, deduplicateChain(chainList))
-						if len(solutions) >= limit {
-							return solutions, nodesVisited
+		for _, item := range currentQueue {
+			if atomic.LoadInt32(&limitReached) == 1 {
+				continue
+			}
+
+			wg.Add(1)
+			go func(item QueueItemO) {
+				defer wg.Done()
+
+				if atomic.LoadInt32(&limitReached) == 1 {
+					return
+				}
+
+				mu.Lock()
+				nodesVisited++
+				mu.Unlock()
+
+				if len(item.Elems) == 0 {
+					chainList := buildChainList(item.Chain)
+					if isFullyResolved(chainList, nil) {
+						key := chainKey(chainList)
+						mu.Lock()
+						if !seenChains[key] {
+							seenChains[key] = true
+							solutions = append(solutions, deduplicateChain(chainList))
+
+							if len(solutions) >= limit {
+								atomic.StoreInt32(&limitReached, 1)
+							}
 						}
+						mu.Unlock()
+					}
+					return
+				}
+
+				if atomic.LoadInt32(&limitReached) == 1 {
+					return
+				}
+
+				localNextQueue := []QueueItemO{}
+
+				elem := item.Elems[0]
+				rest := item.Elems[1:]
+
+				if baseElements[elem] || item.Visited[elem] {
+					localNextQueue = append(localNextQueue, QueueItemO{
+						Elems:   rest,
+						Chain:   item.Chain,
+						Depth:   item.Depth,
+						Visited: copyMap(item.Visited),
+					})
+				} else {
+					recipes := idx[elem]
+					for _, comps := range recipes {
+						c1, c2 := comps[0], comps[1]
+						tTier := tiers[elem]
+						if tiers[c1] >= tTier || tiers[c2] >= tTier {
+							continue
+						}
+
+						node := &ChainNode{
+							Recipe: Recipe{
+								Result:     elem,
+								Components: []string{c1, c2},
+							},
+							Parent: item.Chain,
+						}
+
+						newElems := append([]string{}, rest...)
+						if !item.Visited[c1] && !baseElements[c1] {
+							newElems = append(newElems, c1)
+						}
+						if !item.Visited[c2] && !baseElements[c2] {
+							newElems = append(newElems, c2)
+						}
+
+						newVisited := copyMap(item.Visited)
+						newVisited[elem] = true
+
+						localNextQueue = append(localNextQueue, QueueItemO{
+							Elems:   newElems,
+							Chain:   node,
+							Depth:   depth + 1,
+							Visited: newVisited,
+						})
 					}
 				}
-				continue
-			}
 
-			elem := item.Elems[0]
-			rest := item.Elems[1:]
-
-			if baseElements[elem] || item.Visited[elem] {
-				queue = append(queue, QueueItemO{
-					Elems:   rest,
-					Chain:   item.Chain,
-					Depth:   item.Depth,
-					Visited: copyMap(item.Visited),
-				})
-				continue
-			}
-
-			recipes := idx[elem]
-			for _, comps := range recipes {
-				c1, c2 := comps[0], comps[1]
-				tTier := tiers[elem]
-				if tiers[c1] > tTier || tiers[c2] > tTier {
-					continue
+				if len(localNextQueue) > 0 && atomic.LoadInt32(&limitReached) == 0 {
+					nextQueueMu.Lock()
+					nextQueue = append(nextQueue, localNextQueue...)
+					nextQueueMu.Unlock()
 				}
-
-				node := &ChainNode{
-					Recipe: Recipe{
-						Result:     elem,
-						Components: []string{c1, c2},
-					},
-					Parent: item.Chain,
-				}
-
-				newElems := append([]string{}, rest...)
-				if !item.Visited[c1] && !baseElements[c1] {
-					newElems = append(newElems, c1)
-				}
-				if !item.Visited[c2] && !baseElements[c2] {
-					newElems = append(newElems, c2)
-				}
-
-				newVisited := copyMap(item.Visited)
-				newVisited[elem] = true
-
-				nextQueue = append(nextQueue, QueueItemO{
-					Elems:   newElems,
-					Chain:   node,
-					Depth:   depth + 1,
-					Visited: newVisited,
-				})
-			}
+			}(item)
 		}
+
+		wg.Wait()
+		mu.Lock()
+		if len(solutions) >= limit {
+			mu.Unlock()
+			return solutions[:limit], nodesVisited 
+		}
+		mu.Unlock()
 
 		queue = nextQueue
 	}
+
 	return solutions, nodesVisited
 }
 
