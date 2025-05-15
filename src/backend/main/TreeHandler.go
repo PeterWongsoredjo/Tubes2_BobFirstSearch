@@ -116,7 +116,7 @@ func main() {
 	}
 	idx := buildIndex(recipes)
 	http.HandleFunc("/api/tree", treeHandler(idx, tiers))
-	addr := ":8080"
+	addr := "0.0.0.0:8080"
 	log.Printf("Listening on %s…\n", addr)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }

@@ -56,5 +56,5 @@ func main() {
 	http.HandleFunc("/api/scrape", enableCORS(scrapeHandler))
 
 	fmt.Println("Server starting on http://localhost:8081")
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8081", nil))
 }

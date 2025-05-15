@@ -36,7 +36,7 @@ export function RecipeTree({
       if (!root) return
       statsUpdatedRef.current = false
 
-      const url = new URL("http://localhost:8080/api/tree")
+      const url = new URL("http://tubes2-bobfirstsearch.up.railway.app/api/tree")
       url.searchParams.set("root", root)
       url.searchParams.set("alg", alg)
       url.searchParams.set("mode", mode)
