@@ -18,7 +18,7 @@ const ScrapingButton = () => {
     }
 
     try {
-      const response = await fetch("http://tubes2-bobfirstsearch.up.railway.app/api/scrape", {
+      const response = await fetch("http://tubes2bobfirstsearch-production.up.railway.app/api/scrape", {
         method: "POST",
       })
 
