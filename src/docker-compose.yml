@@ -2,7 +2,7 @@ services:
   # Frontend Service
   frontend:
     build:
-      context: .src/frontend  # Path to your frontend directory
+      context: ./frontend  # Path to your frontend directory
       dockerfile: Dockerfile  # Dockerfile for the frontend build
     ports:
       - "3000:3000"  # Exposes port 3000 for frontend (React app)
@@ -13,7 +13,7 @@ services:
   # Backend Service (cmd - Port 8081)
   cmd:
     build:
-      context: .src/backend  # Path to your backend directory
+      context: ./backend  # Path to your backend directory
       dockerfile: Dockerfile  # Dockerfile for the backend build
     command: /server  # Runs the `cmd` binary
     ports:
